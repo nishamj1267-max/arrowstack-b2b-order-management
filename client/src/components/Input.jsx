@@ -1,4 +1,3 @@
-
 function Input({
   type = "text",
   placeholder,

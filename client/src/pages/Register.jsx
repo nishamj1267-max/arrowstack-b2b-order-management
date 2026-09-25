@@ -16,15 +16,41 @@ function Register() {
     confirmPassword: "",
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+
+    // Error type kartana remove hoil
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
+
+  const validate = () => {
+    let newErrors = {};
+
+    if (!form.name.trim()) newErrors.name = "Full Name is required";
+    if (!form.company.trim()) newErrors.company = "Company Name is required";
+    if (!form.email.trim()) newErrors.email = "Email is required";
+    if (!form.phone.trim()) newErrors.phone = "Phone Number is required";
+    if (!form.password) newErrors.password = "Password is required";
+    if (!form.confirmPassword)
+      newErrors.confirmPassword = "Confirm Password is required";
+
+    if (
+      form.password &&
+      form.confirmPassword &&
+      form.password !== form.confirmPassword
+    ) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleRegister = () => {
-    if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
+    if (!validate()) return;
 
     alert("Account created successfully!");
     navigate("/");
@@ -42,6 +68,7 @@ function Register() {
           value={form.name}
           onChange={handleChange}
         />
+        {errors.name && <p className="error-text">{errors.name}</p>}
 
         <Input
           placeholder="Company Name"
@@ -49,6 +76,7 @@ function Register() {
           value={form.company}
           onChange={handleChange}
         />
+        {errors.company && <p className="error-text">{errors.company}</p>}
 
         <Input
           type="email"
@@ -57,6 +85,7 @@ function Register() {
           value={form.email}
           onChange={handleChange}
         />
+        {errors.email && <p className="error-text">{errors.email}</p>}
 
         <Input
           type="tel"
@@ -65,6 +94,7 @@ function Register() {
           value={form.phone}
           onChange={handleChange}
         />
+        {errors.phone && <p className="error-text">{errors.phone}</p>}
 
         <Input
           type="password"
@@ -73,6 +103,7 @@ function Register() {
           value={form.password}
           onChange={handleChange}
         />
+        {errors.password && <p className="error-text">{errors.password}</p>}
 
         <Input
           type="password"
@@ -81,6 +112,9 @@ function Register() {
           value={form.confirmPassword}
           onChange={handleChange}
         />
+        {errors.confirmPassword && (
+          <p className="error-text">{errors.confirmPassword}</p>
+        )}
 
         <Button text="Create Account" onClick={handleRegister} />
 
