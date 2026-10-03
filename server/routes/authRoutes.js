@@ -1,7 +1,10 @@
 const express = require("express");
 const { body } = require("express-validator");
 
-const { registerUser } = require("../controllers/authController");
+const {
+    registerUser,
+    loginUser,
+} = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -34,6 +37,22 @@ router.post(
         .withMessage("Phone number must be between 10 and 15 characters"),
     ],
     registerUser
+);
+
+// User Login
+router.post(
+    "/login", [
+        body("email")
+        .trim()
+        .isEmail()
+        .withMessage("Please provide a valid email address")
+        .normalizeEmail(),
+
+        body("password")
+        .notEmpty()
+        .withMessage("Password is required"),
+    ],
+    loginUser
 );
 
 module.exports = router;

@@ -1,9 +1,10 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 const pool = require("../config/db");
 
+// User Registration
 const registerUser = async(req, res) => {
-    // Check validation errors
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -23,7 +24,6 @@ const registerUser = async(req, res) => {
     } = req.body;
 
     try {
-        // Check if email already exists
         const existingUser = await pool.query(
             "SELECT id FROM users WHERE email = $1", [email]
         );
@@ -35,11 +35,9 @@ const registerUser = async(req, res) => {
             });
         }
 
-        // Hash password
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
-        // Create user
         const result = await pool.query(
             `INSERT INTO users
             (name, company_name, email, phone, password_hash)
@@ -68,6 +66,80 @@ const registerUser = async(req, res) => {
     }
 };
 
+// User Login
+const loginUser = async(req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            success: false,
+            message: "Validation failed",
+            errors: errors.array(),
+        });
+    }
+
+    const { email, password } = req.body;
+
+    try {
+        // Find user by email
+        const result = await pool.query(
+            `SELECT id, name, company_name, email, phone, password_hash, role
+             FROM users
+             WHERE email = $1`, [email]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password",
+            });
+        }
+
+        const user = result.rows[0];
+
+        // Compare password with hashed password
+        const isPasswordValid = await bcrypt.compare(
+            password,
+            user.password_hash
+        );
+
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password",
+            });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign({
+                userId: user.id,
+                role: user.role,
+            },
+            process.env.JWT_SECRET, {
+                expiresIn: "1d",
+            }
+        );
+
+        // Remove password hash before sending response
+        delete user.password_hash;
+
+        res.status(200).json({
+            success: true,
+            message: "Login successful",
+            token,
+            user,
+        });
+    } catch (error) {
+        console.error("Login error:", error.message);
+
+        res.status(500).json({
+            success: false,
+            message: "Server error during login",
+        });
+    }
+};
+
 module.exports = {
     registerUser,
+    loginUser,
 };
