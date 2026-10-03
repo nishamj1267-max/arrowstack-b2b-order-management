@@ -1,0 +1,464 @@
+03 – Business Use Cases
+1. Document Purpose
+
+This document defines the major business use cases of the B2B Order Management Platform. It describes how different stakeholders interact with the system to complete business activities such as user registration, product management, cart management, order placement, inventory management, invoice generation, and audit activity tracking.
+
+The purpose of this document is to provide a clear understanding of the system workflow and expected interactions between users and the platform.
+
+2. Business Actors
+
+The primary actors involved in the system are:
+| Actor                     | Description                                                                                                    |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Customer                  | A registered business user who browses products, manages a cart, places orders, and tracks orders.             |
+| Administrator             | A privileged user who manages products, inventory, orders, and system activities.                              |
+| Business Owner            | The stakeholder who is interested in business operations, order processing, inventory, and system performance. |
+| Developer                 | Responsible for implementing, maintaining, testing, and improving the platform.                                |
+| Mentor / Project Reviewer | Reviews project progress, implementation quality, documentation, and evidence.                                 |
+
+
+3. Use Case Overview
+
+The major use cases of the system are:
+| Use Case ID | Use Case Name       | Primary Actor            |
+| ----------- | ------------------- | ------------------------ |
+| UC-01       | User Registration   | Customer                 |
+| UC-02       | User Login          | Customer / Administrator |
+| UC-03       | Browse Products     | Customer                 |
+| UC-04       | Manage Cart         | Customer                 |
+| UC-05       | Place Order         | Customer                 |
+| UC-06       | View Order History  | Customer                 |
+| UC-07       | View Invoice        | Customer                 |
+| UC-08       | Manage Products     | Administrator            |
+| UC-09       | Manage Inventory    | Administrator            |
+| UC-10       | Manage Orders       | Administrator            |
+| UC-11       | View Audit Activity | Administrator            |
+
+
+4. Detailed Use Cases
+UC-01: User Registration
+
+Primary Actor: Customer
+
+Goal:
+Allow a new customer to create an account on the platform.
+
+Preconditions:
+
+The customer is not already registered.
+The registration page is accessible.
+
+Trigger:
+The customer selects the registration option.
+
+Main Flow:
+
+Customer opens the registration page.
+Customer enters name, company name, email, phone number, and password.
+Customer confirms the password.
+System validates the entered information.
+System checks whether the email is already registered.
+System creates the customer account.
+System displays a successful registration message.
+
+Alternative / Exception Flows:
+
+Required fields are missing.
+Email format is invalid.
+Password and confirm password do not match.
+Email already exists.
+Server or database error occurs.
+
+Postcondition:
+A valid customer account is created successfully.
+
+UC-02: User Login
+
+Primary Actor: Customer / Administrator
+
+Goal:
+Allow an authorized user to securely access the platform.
+
+Preconditions:
+
+User account exists.
+User has valid login credentials.
+
+Trigger:
+User submits the login form.
+
+Main Flow:
+
+User enters email and password.
+System validates the input.
+System verifies the credentials.
+System generates a JWT token.
+System identifies the user's role.
+System redirects the user to the appropriate dashboard.
+
+Alternative / Exception Flows:
+
+Email or password is incorrect.
+Required fields are missing.
+Account does not exist.
+Authentication service fails.
+
+Postcondition:
+The authenticated user receives authorized access to the system.
+
+UC-03: Browse Products
+
+Primary Actor: Customer
+
+Goal:
+Allow customers to view available products and their details.
+
+Preconditions:
+
+Customer is logged in.
+Product data is available.
+
+Trigger:
+Customer opens the Products page.
+
+Main Flow:
+
+Customer opens the Products page.
+System retrieves product information.
+System displays product name, description, price, and stock information.
+Customer reviews available products.
+Customer selects a product if required.
+
+Alternative / Exception Flows:
+
+No products are available.
+Product data cannot be retrieved.
+Product information is temporarily unavailable.
+
+Postcondition:
+Customer can view available product information.
+
+UC-04: Manage Cart
+
+Primary Actor: Customer
+
+Goal:
+Allow customers to add, update, and remove products from their shopping cart.
+
+Preconditions:
+
+Customer is logged in.
+Products are available.
+
+Trigger:
+Customer selects a product to add to the cart.
+
+Main Flow:
+
+Customer selects a product.
+Customer specifies the required quantity.
+System checks product availability.
+Product is added to the cart.
+Customer can increase or decrease the quantity.
+Customer can remove products.
+System calculates the updated cart total.
+
+Alternative / Exception Flows:
+
+Requested quantity exceeds available stock.
+Product is unavailable.
+Cart update fails.
+
+Postcondition:
+The cart contains the customer's selected products and quantities.
+
+UC-05: Place Order
+
+Primary Actor: Customer
+
+Goal:
+Allow a customer to place an order for selected products.
+
+Preconditions:
+
+Customer is authenticated.
+Cart contains at least one product.
+Products have sufficient stock.
+
+Trigger:
+Customer selects the checkout/place order option.
+
+Main Flow:
+
+Customer reviews the cart.
+System validates product availability.
+System calculates the order total.
+Customer confirms the order.
+System creates the order.
+System records order details.
+System updates product stock.
+System generates an order confirmation.
+Order status is set to the appropriate initial status.
+
+Alternative / Exception Flows:
+
+Cart is empty.
+Product stock is insufficient.
+Product is no longer available.
+Order creation fails.
+Database transaction fails.
+
+Postcondition:
+A valid order is created and inventory is updated.
+
+UC-06: View Order History
+
+Primary Actor: Customer
+
+Goal:
+Allow customers to view their previous and current orders.
+
+Preconditions:
+
+Customer is authenticated.
+Customer has placed at least one order.
+
+Trigger:
+Customer opens the Orders page.
+
+Main Flow:
+
+Customer opens the Orders page.
+System retrieves orders belonging to the customer.
+System displays order ID, date, amount, and status.
+Customer selects an order to view its details.
+
+Alternative / Exception Flows:
+
+Customer has no orders.
+Order information cannot be retrieved.
+
+Postcondition:
+Customer can view their order history and order details.
+
+UC-07: View Invoice
+
+Primary Actor: Customer
+
+Goal:
+Allow customers to view or generate an invoice for a completed order.
+
+Preconditions:
+
+Customer is authenticated.
+A valid order exists.
+
+Trigger:
+Customer selects the invoice option for an order.
+
+Main Flow:
+
+Customer opens an order.
+Customer selects the invoice option.
+System retrieves order and customer information.
+System prepares invoice details.
+System displays the invoice.
+Customer can save or download the invoice if supported.
+
+Alternative / Exception Flows:
+
+Order does not exist.
+Invoice information is unavailable.
+Invoice generation fails.
+
+Postcondition:
+The customer can access the invoice associated with the order.
+
+5. Administrator Use Cases
+UC-08: Manage Products
+
+Primary Actor: Administrator
+
+Goal:
+Allow administrators to manage products available on the platform.
+
+Preconditions:
+
+Administrator is authenticated.
+Administrator has the required permissions.
+
+Trigger:
+Administrator opens the Product Management section.
+
+Main Flow:
+
+Administrator views the product list.
+Administrator adds a new product or selects an existing product.
+Administrator enters or updates product information.
+System validates the information.
+System saves the product changes.
+Updated product information is displayed.
+
+Alternative / Exception Flows:
+
+Required information is missing.
+Invalid product data is entered.
+Product update fails.
+Administrator does not have permission.
+
+Postcondition:
+Product information is created or updated successfully.
+
+UC-09: Manage Inventory
+
+Primary Actor: Administrator
+
+Goal:
+Allow administrators to monitor and update product stock.
+
+Preconditions:
+
+Administrator is authenticated.
+Products exist in the system.
+
+Trigger:
+Administrator opens the Inventory Management section.
+
+Main Flow:
+
+Administrator views current stock.
+Administrator selects a product.
+Administrator updates stock information.
+System validates the stock quantity.
+System saves the updated inventory.
+Updated stock information becomes available to the system.
+
+Alternative / Exception Flows:
+
+Invalid stock quantity is entered.
+Product does not exist.
+Database update fails.
+
+Postcondition:
+Inventory information is updated successfully.
+
+UC-10: Manage Orders
+
+Primary Actor: Administrator
+
+Goal:
+Allow administrators to monitor and manage customer orders.
+
+Preconditions:
+
+Administrator is authenticated.
+Orders exist or are available for management.
+
+Trigger:
+Administrator opens the Order Management section.
+
+Main Flow:
+
+Administrator views the list of orders.
+Administrator selects an order.
+System displays order details.
+Administrator reviews the order.
+Administrator updates the order status when required.
+System saves the status change.
+The updated order status becomes available to the customer.
+
+Alternative / Exception Flows:
+
+Order does not exist.
+Invalid status update is attempted.
+Administrator does not have permission.
+Database update fails.
+
+Postcondition:
+The order status is updated and recorded in the system.
+
+UC-11: View Audit Activity
+
+Primary Actor: Administrator
+
+Goal:
+Allow administrators to review important system activities.
+
+Preconditions:
+
+Administrator is authenticated.
+Audit records are available.
+
+Trigger:
+Administrator opens the Audit Activity section.
+
+Main Flow:
+
+Administrator opens the audit activity page.
+System retrieves recorded activities.
+System displays relevant activity information.
+Administrator reviews the records.
+
+Audit information may include:
+
+User identification
+Action performed
+Date and time
+Related record
+Activity status
+
+Alternative / Exception Flows:
+
+No audit records are available.
+Audit data cannot be retrieved.
+
+Postcondition:
+Administrator can review recorded system activities.
+
+6. End-to-End Business Workflow
+
+The overall business workflow of the platform is:
+
+Registration → Login → Browse Products → Add Products to Cart → Review Cart → Place Order → Stock Update → Order Processing → Invoice Generation → Order History
+
+For administrators:
+
+Admin Login → Product Management → Inventory Management → Order Management → Audit Activity Review
+
+7. Business Rules
+
+The following business rules apply to the platform:
+
+Users must provide valid information during registration.
+Each user account must have a unique email address.
+Users must be authenticated before accessing protected features.
+Customers can access only customer-related functionality.
+Administrators can access administrative functionality based on their assigned role.
+Customers cannot order more products than the available stock.
+Product stock must be updated after a successful order.
+Order information must be associated with the correct customer.
+Important administrative activities should be recorded as audit activities.
+Invalid input must not be accepted by the system.
+Unauthorized users must not access protected APIs.
+Order and inventory data must remain consistent.
+
+
+8. Use Case Summary
+
+The B2B Order Management Platform supports two primary operational roles: Customer and Administrator.
+
+Customers use the platform to register, authenticate, browse products, manage their cart, place orders, view order history, and access invoices.
+
+Administrators manage products, inventory, customer orders, and audit activities.
+
+These use cases define the expected business interactions and provide a foundation for backend API implementation, database design, authentication, authorization, and system testing.
+
+9. Document Control
+
+Document Name: Business Use Cases
+Project: B2B Order Management Platform
+Version: 1.0
+Date: 03 October 2026
+Author: Nisha Jadhav
+Status: Draft
+

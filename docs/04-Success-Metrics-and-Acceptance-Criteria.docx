@@ -1,0 +1,307 @@
+04 – Success Metrics and Acceptance Criteria
+1. Document Purpose
+
+This document defines the measurable success criteria and acceptance conditions for the B2B Order Management Platform.
+
+The purpose is to determine whether the implemented system meets the defined business, functional, technical, security, and usability requirements.
+
+2. Success Measurement Approach
+
+Project success will be evaluated using the following areas:
+
+Functional completeness
+API functionality
+Database reliability
+Authentication and authorization
+Data validation
+Order and inventory consistency
+Error handling
+Testing results
+User experience
+Documentation quality
+Evidence of implementation and validation
+
+The project will be considered successful when the core business workflow operates correctly and the defined acceptance criteria are satisfied.
+
+3. Success Metrics
+
+| Metric ID | Success Metric       | Measurement Method                               | Target                                         |
+| --------- | -------------------- | ------------------------------------------------ | ---------------------------------------------- |
+| SM-01     | User Registration    | Test valid and invalid registration scenarios    | Valid registration works successfully          |
+| SM-02     | User Login           | Test valid and invalid credentials               | Authorized users can log in                    |
+| SM-03     | Authentication       | Verify JWT-based protected access                | Protected APIs reject unauthenticated requests |
+| SM-04     | Role-Based Access    | Test Customer and Administrator permissions      | Unauthorized role access is blocked            |
+| SM-05     | Product Management   | Test create, read, update, and delete operations | Admin product operations work correctly        |
+| SM-06     | Inventory Management | Test stock updates and validation                | Stock remains consistent                       |
+| SM-07     | Cart Management      | Test add, update, and remove operations          | Cart operations work correctly                 |
+| SM-08     | Order Processing     | Test complete order workflow                     | Valid orders are created successfully          |
+| SM-09     | Stock Validation     | Attempt orders exceeding available stock         | Invalid quantities are rejected                |
+| SM-10     | Order History        | Verify customer-specific orders                  | Customers can view their own orders            |
+| SM-11     | Invoice Generation   | Generate invoice for a valid order               | Invoice information is generated correctly     |
+| SM-12     | Audit Activity       | Perform tracked administrative actions           | Important activities are recorded              |
+| SM-13     | Input Validation     | Test missing and invalid values                  | Invalid input is rejected                      |
+| SM-14     | Error Handling       | Test expected failure scenarios                  | Clear error responses are provided             |
+| SM-15     | API Integration      | Test frontend-backend communication              | Required API requests work correctly           |
+| SM-16     | Database Operations  | Test CRUD and relational operations              | Data is stored and retrieved correctly         |
+| SM-17     | Testing Evidence     | Maintain test cases and results                  | Core functionality has documented evidence     |
+| SM-18     | Documentation        | Review project documentation                     | Required documents are complete and organized  |
+
+
+4. Functional Acceptance Criteria
+4.1 User Registration
+
+The registration functionality will be accepted when:
+
+A new customer can register successfully.
+Required fields are validated.
+Invalid email formats are rejected.
+Password confirmation is validated.
+Duplicate email registration is prevented.
+Appropriate success and error messages are displayed.
+
+
+4.2 User Login
+
+The login functionality will be accepted when:
+
+Registered users can log in using valid credentials.
+Invalid credentials are rejected.
+A valid JWT token is generated after successful authentication.
+The user's role is identified correctly.
+Users are redirected to the appropriate area of the application.
+
+
+4.3 Role-Based Access Control
+
+The authorization functionality will be accepted when:
+
+Customer users can access customer features.
+Administrator users can access administrative features.
+Customers cannot access restricted administrator APIs.
+Unauthorized requests are rejected.
+Role information is correctly associated with authenticated users.
+
+
+4.4 Product Management
+
+Product management will be accepted when an administrator can:
+
+Create a product.
+View products.
+Update product information.
+Delete a product when appropriate.
+Enter valid product information.
+Receive appropriate validation and error messages.
+
+
+4.5 Inventory Management
+
+Inventory management will be accepted when:
+
+Administrators can view product stock.
+Administrators can update stock quantities.
+Invalid stock values are rejected.
+Stock information is correctly stored in the database.
+Product availability reflects the current stock level.
+
+
+4.6 Cart Management
+
+Cart functionality will be accepted when:
+
+Customers can add products to the cart.
+Customers can update product quantities.
+Customers can remove products.
+The system calculates the cart total correctly.
+The system prevents invalid quantities.
+The system checks product availability.
+
+
+4.7 Order Processing
+
+Order processing will be accepted when:
+
+A customer can place an order containing valid products.
+The system validates product availability before creating the order.
+The order is stored correctly in the database.
+The order is associated with the correct customer.
+Product stock is updated after a successful order.
+An appropriate order status is assigned.
+Failed orders do not result in incorrect stock changes.
+
+
+4.8 Order History
+
+Order history will be accepted when:
+
+Customers can view their own orders.
+Orders contain correct order information.
+Customers cannot access another customer's order information.
+Order status is displayed correctly.
+Empty order history is handled appropriately.
+
+
+4.9 Invoice Generation
+
+Invoice functionality will be accepted when:
+
+An invoice can be generated for a valid order.
+Customer information is displayed correctly.
+Order information is displayed correctly.
+Product and quantity information is included.
+Total amount is calculated correctly.
+Invoice generation errors are handled appropriately.
+
+
+4.10 Audit Activity
+
+Audit functionality will be accepted when:
+
+Important administrative actions are recorded.
+Audit records contain relevant information.
+Activity date and time are recorded.
+The responsible user can be identified.
+Administrators can review available audit records.
+
+5. Technical Acceptance Criteria
+
+The project will meet technical acceptance requirements when:
+
+The frontend communicates with the backend through REST APIs.
+Backend APIs follow a consistent structure.
+PostgreSQL is used for persistent data storage.
+Database tables and relationships are correctly implemented.
+Database migrations are maintained where applicable.
+JWT authentication is implemented for protected resources.
+Role-based authorization is implemented.
+Server-side validation is implemented.
+Appropriate HTTP status codes are returned.
+Errors are handled without exposing sensitive implementation details.
+Environment-specific configuration is separated from source code.
+Sensitive credentials are not committed to the GitHub repository.
+6. Security Acceptance Criteria
+
+The security requirements will be accepted when:
+
+Passwords are not stored as plain text.
+Authentication is required for protected resources.
+JWT tokens are validated before accessing protected APIs.
+Role-based restrictions are enforced on the backend.
+Unauthorized users receive appropriate responses.
+Input validation is applied to important API requests.
+Database credentials and secret keys are stored securely.
+Sensitive configuration files are excluded from version control where required.
+7. Testing Acceptance Criteria
+
+Testing will be considered satisfactory when:
+
+Core functional workflows have been tested.
+Both successful and unsuccessful scenarios are tested.
+Validation scenarios are tested.
+Authentication scenarios are tested.
+Authorization scenarios are tested.
+Product and inventory operations are tested.
+Cart and order operations are tested.
+API responses are verified.
+Database operations are verified.
+Important defects identified during testing are fixed or documented.
+8. Evidence Requirements
+
+The project will maintain evidence to demonstrate implementation and validation.
+
+Evidence may include:
+
+Application screenshots
+API testing screenshots
+Database screenshots
+Test case results
+Git commit history
+GitHub repository evidence
+Validation results
+Error-handling demonstrations
+Order workflow demonstration
+Authentication and authorization testing
+Mentor feedback
+Final project demonstration
+
+Evidence files should be stored in the evidence directory using clear and descriptive filenames.
+
+9. Business Workflow Acceptance
+
+The complete business workflow will be considered successful when the following sequence can be demonstrated:
+
+Customer Registration → Login → Browse Products → Add to Cart → Checkout → Place Order → Inventory Update → View Order → Generate Invoice
+
+The administrator workflow should demonstrate:
+
+Admin Login → Manage Products → Manage Inventory → Manage Orders → Review Audit Activities
+
+10. Definition of Done
+
+A feature will be considered complete when:
+
+The feature is implemented.
+Required validation is implemented.
+The feature is connected to the appropriate API or database functionality.
+Successful scenarios have been tested.
+Failure scenarios have been tested.
+Identified critical issues have been resolved or documented.
+Evidence has been captured where applicable.
+The code has been committed to GitHub.
+Relevant documentation has been updated.
+11. Project Completion Criteria
+
+The project will be considered ready for final submission when:
+
+Core frontend functionality is implemented.
+Backend APIs are implemented.
+PostgreSQL database integration is completed.
+Authentication and authorization are functional.
+Core product, cart, inventory, and order workflows are functional.
+Validation and error handling are implemented.
+Testing evidence is available.
+Documentation is organized.
+GitHub repository is organized and reproducible.
+README provides setup and usage instructions.
+Final demonstration can explain the problem, solution, implementation, testing, limitations, and future improvements.
+
+
+12. Limitations
+
+The project may have limitations due to the internship timeline and development environment.
+
+Potential limitations may include:
+
+No real payment gateway integration.
+No real business production deployment.
+Use of simulated or development data.
+Limited number of test users.
+Limited load and performance testing.
+Some advanced features may remain future enhancements.
+
+These limitations will be clearly documented rather than treated as completed functionality.
+
+13. Future Enhancements
+
+Possible future enhancements include:
+
+Online payment integration
+Email and SMS notifications
+Advanced reporting dashboard
+Product search and filtering
+Advanced analytics
+Automated testing pipeline
+Cloud deployment
+Docker-based deployment
+Improved monitoring and logging
+Mobile application integration
+
+
+14. Document Control
+
+Document Name: Success Metrics and Acceptance Criteria
+Project: B2B Order Management Platform
+Version: 1.0
+Date: 03 October 2026
+Author: Nisha Jadhav
+Status: Draft

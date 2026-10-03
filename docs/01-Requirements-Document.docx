@@ -1,0 +1,888 @@
+B2B Order Management Platform
+Software Requirements Specification (SRS)
+
+Project Type: Full Stack Web Application
+Domain: Full Stack Development
+Development Mode: Individual Project
+Duration: 1 Month
+Frontend: React.js
+Backend: Node.js + Express.js
+Database: PostgreSQL
+Authentication: JWT
+API Architecture: REST API
+
+1. Introduction
+1.1 Purpose
+
+The purpose of this document is to define the functional and non-functional requirements of the B2B Order Management Platform.
+
+The system is designed as a full-stack web application that provides a centralized platform for managing products, inventory, shopping carts, customer orders, user authentication, administrative activities, and order-related records.
+
+This document establishes the project scope, system requirements, user roles, business requirements, technical expectations, assumptions, constraints, and acceptance requirements.
+
+The document will be used as a reference throughout the development, testing, validation, documentation, and final review stages of the project.
+
+1.2 Project Overview
+
+The B2B Order Management Platform is a web-based application designed to simulate a business-to-business product ordering workflow.
+
+The platform allows business customers to:
+
+Create an account.
+Log in securely.
+Browse available products.
+View product information.
+Add products to a shopping cart.
+Modify cart quantities.
+Place orders.
+View order history.
+Track order information.
+Access order invoices.
+
+Administrators can:
+
+Manage products.
+Manage inventory.
+Monitor customer orders.
+Update order status.
+Manage product stock.
+Monitor important system activities.
+Review audit records.
+
+The application follows a full-stack architecture in which the React frontend communicates with the Node.js and Express.js backend through REST APIs. PostgreSQL is used for persistent data storage.
+
+2. Problem Statement
+
+Many small and medium-sized businesses may manage B2B ordering processes using manual communication, spreadsheets, phone calls, messaging applications, or disconnected systems.
+
+Such processes can create several operational problems:
+
+Product information may not be centralized.
+Inventory information may become outdated.
+Orders may be difficult to track.
+Manual order processing can introduce errors.
+Customer order history may be difficult to maintain.
+Administrative activities may not have a proper activity record.
+User access may not be properly controlled.
+Business owners may not have a centralized view of order operations.
+
+The proposed system addresses these problems by providing a centralized digital platform for product, cart, order, inventory, authentication, and activity management.
+
+3. Project Objectives
+
+The primary objectives of the project are:
+
+To develop a functional full-stack B2B order management platform.
+To provide a centralized product and ordering workflow.
+To implement secure user registration and authentication.
+To implement JWT-based authentication.
+To implement role-based access control.
+To provide product management functionality for administrators.
+To provide product browsing functionality for customers.
+To implement shopping cart management.
+To implement order creation and order tracking.
+To maintain accurate inventory information.
+To automatically update inventory after successful orders.
+To develop REST APIs for frontend-backend communication.
+To store application data in PostgreSQL.
+To implement input validation.
+To implement structured error handling.
+To maintain audit-friendly activity records.
+To generate order invoices.
+To test and validate core application functionality.
+To maintain professional project documentation.
+To produce a portfolio-ready full-stack project.
+
+4. Stakeholders
+
+The major stakeholders of the system are:
+
+Stakeholder	Description	Main Interest
+Customer	Business user who purchases products	Product browsing, cart, orders and invoices
+Administrator	Authorized user responsible for system management	Products, inventory, orders and activities
+Business Owner	Owner or manager of the business	Overall business ordering workflow
+Developer	Person responsible for developing the system	Implementation, testing and maintenance
+Mentor / Reviewer	Project reviewer	Requirements, quality, evidence and documentation
+
+5. User Roles
+5.1 Customer
+
+A customer is an authenticated business user who can interact with the ordering system.
+
+The customer shall be able to:
+
+Register an account.
+Log in.
+View available products.
+Search or browse products.
+View product details.
+Add products to the cart.
+Update product quantities.
+Remove products from the cart.
+View cart totals.
+Place orders.
+View order history.
+View individual order details.
+Track order status.
+View or download invoices.
+
+5.2 Administrator
+
+An administrator is an authorized user who manages the operational aspects of the platform.
+
+The administrator shall be able to:
+
+Log in securely.
+Access the administration panel.
+Create products.
+View products.
+Update products.
+Delete products.
+Update inventory quantities.
+View customer orders.
+Update order status.
+Monitor important activities.
+Review audit records.
+
+6. Functional Requirements
+FR-01: User Registration
+
+The system shall provide a registration interface for new customers.
+
+The registration process shall collect required information such as:
+
+Full name
+Company name
+Email address
+Phone number
+Password
+Password confirmation
+
+The system shall validate required fields before creating an account.
+
+The system shall reject registration when:
+
+Required information is missing.
+Email format is invalid.
+Password confirmation does not match.
+The email address is already registered.
+
+Passwords shall be securely hashed before being stored in the database.
+
+FR-02: User Login
+
+The system shall allow registered users to authenticate using their credentials.
+
+The login process shall:
+
+Accept valid user credentials.
+Verify the credentials.
+Generate a JWT token after successful authentication.
+Return the authentication response to the frontend.
+Allow access to protected resources according to the user's role.
+
+Invalid credentials shall return an appropriate error response.
+
+FR-03: JWT Authentication
+
+The system shall use JSON Web Tokens for authentication.
+
+JWT authentication shall be used to:
+
+Identify authenticated users.
+Protect private API endpoints.
+Maintain authenticated sessions.
+Support role-based authorization.
+
+The backend shall validate JWT tokens before allowing access to protected resources.
+
+
+FR-04: Role-Based Access Control
+
+The system shall support at least two roles:
+
+Customer
+Administrator
+
+Customers shall only have access to customer-level functionality.
+
+Administrators shall have access to administrative functionality.
+
+Unauthorized users shall not be allowed to access protected administrative endpoints.
+
+
+7. Product Requirements
+FR-05: Product Creation
+
+Administrators shall be able to create new products.
+
+Product information may include:
+
+Product name
+Product description
+Category
+Price
+Stock quantity
+Product image
+Product status
+
+The system shall validate product information before storing it.
+
+
+FR-06: Product Viewing
+
+Customers shall be able to view available products.
+
+The product listing shall display relevant information such as:
+
+Product name
+Description
+Price
+Availability
+Stock status
+Product image
+
+
+FR-07: Product Update
+
+Administrators shall be able to update existing product information.
+
+Changes may include:
+
+Product name
+Description
+Price
+Category
+Stock quantity
+Product status
+
+
+FR-08: Product Deletion
+
+Administrators shall be able to remove products from the product catalogue.
+
+The system shall ensure that product deletion does not create invalid database relationships.
+
+
+
+8. Inventory Requirements
+FR-09: Inventory Management
+
+The system shall maintain the available stock quantity of each product.
+
+Administrators shall be able to update inventory information.
+
+The system shall display appropriate stock availability to customers.
+
+
+FR-10: Stock Validation
+
+Before an order is created, the system shall verify whether sufficient stock is available.
+
+If the requested quantity is greater than the available quantity, the system shall reject the order and return an appropriate error message.
+
+
+FR-11: Stock Update
+
+After a successful order is created, the system shall decrease the corresponding product stock quantity.
+
+The stock update and order creation process should maintain data consistency.
+
+
+9. Cart Requirements
+FR-12: Add Product to Cart
+
+Authenticated customers shall be able to add available products to their cart.
+
+The system shall validate:
+
+Product existence.
+Product availability.
+Requested quantity.
+Available stock.
+
+FR-13: Update Cart
+
+Customers shall be able to modify the quantity of products in their cart.
+
+The system shall ensure that the updated quantity does not exceed available stock.
+
+FR-14: Remove Cart Item
+
+Customers shall be able to remove individual products from their cart.
+
+FR-15: Cart Total
+
+The system shall calculate the total value of the cart based on:
+
+Product Price × Quantity
+
+The cart total shall be updated when quantities are changed or items are removed.
+
+10. Order Requirements
+FR-16: Order Creation
+
+Authenticated customers shall be able to place orders using items available in their cart.
+
+The order process shall:
+
+Validate the customer's authentication.
+Validate cart contents.
+Verify product availability.
+Verify stock quantities.
+Calculate the order total.
+Create the order.
+Create corresponding order items.
+Update product stock.
+Record the relevant activity.
+Return the order confirmation.
+FR-17: Order History
+
+Customers shall be able to view their previous orders.
+
+The order history shall provide information such as:
+
+Order ID
+Order date
+Total amount
+Order status
+Number of items
+FR-18: Order Details
+
+Customers shall be able to view detailed information about an individual order.
+
+Order details may include:
+
+Order ID
+Order date
+Customer information
+Products
+Quantities
+Product prices
+Total amount
+Order status
+FR-19: Order Status
+
+The system shall maintain an order status.
+
+Example statuses may include:
+
+Pending
+Confirmed
+Processing
+Shipped
+Delivered
+Cancelled
+
+Administrators shall be able to update order status according to the business workflow.
+
+11. Invoice Requirements
+FR-20: Invoice Generation
+
+The system shall generate an invoice for successfully processed orders.
+
+The invoice shall contain relevant information such as:
+
+Invoice number
+Order ID
+Order date
+Customer details
+Product details
+Quantity
+Unit price
+Total amount
+Order status
+
+The invoice shall be available to the customer for viewing or downloading.
+
+12. Audit Activity Requirements
+FR-21: Audit Activity Records
+
+The system shall maintain records of important system activities.
+
+Examples include:
+
+Activity	Actor
+User Registration	Customer
+User Login	Customer / Administrator
+Product Created	Administrator
+Product Updated	Administrator
+Product Deleted	Administrator
+Order Placed	Customer
+Order Status Updated	Administrator
+Stock Updated	Administrator
+
+Each audit record should contain information such as:
+
+Activity ID
+User ID
+Activity type
+Description
+Timestamp
+Relevant entity ID where applicable
+
+Audit records shall help provide traceability for important system operations.
+
+13. Validation Requirements
+FR-22: Input Validation
+
+The system shall validate input data on both frontend and backend where appropriate.
+
+Validation shall cover:
+
+Required fields.
+Email format.
+Password requirements.
+Password confirmation.
+Phone number format.
+Product price.
+Product quantity.
+Stock quantity.
+Order quantity.
+
+Backend validation shall not rely only on frontend validation.
+
+14. Error Handling Requirements
+FR-23: Error Handling
+
+The system shall provide structured error handling.
+
+The application shall handle:
+
+Invalid credentials.
+Unauthorized access.
+Forbidden access.
+Invalid input.
+Missing resources.
+Insufficient stock.
+Duplicate registration.
+Database errors.
+Server errors.
+Invalid API requests.
+
+The API shall return appropriate HTTP status codes and meaningful error messages.
+
+15. REST API Requirements
+FR-24: REST API
+
+The backend shall expose REST APIs for communication with the React frontend.
+
+The API structure shall be organized into appropriate routes such as:
+
+/api/auth
+/api/users
+/api/products
+/api/cart
+/api/orders
+/api/inventory
+/api/admin
+/api/audit-logs
+
+The backend shall use appropriate HTTP methods including:
+
+GET
+POST
+PUT
+PATCH
+DELETE
+
+API responses shall use JSON format.
+
+16. Database Requirements
+FR-25: PostgreSQL Database
+
+The system shall use PostgreSQL as the primary relational database.
+
+The database shall maintain structured and related records for:
+
+Users
+Products
+Cart
+Cart Items
+Orders
+Order Items
+Audit Logs
+FR-26: Database Relationships
+
+The database shall maintain appropriate relationships between entities.
+
+Examples:
+
+User → Cart
+User → Orders
+Cart → Cart Items
+Product → Cart Items
+Order → Order Items
+Product → Order Items
+User → Audit Logs
+
+Foreign keys and appropriate database constraints shall be used to maintain data integrity.
+
+17. Database Migration Requirements
+FR-27: Database Migrations
+
+Database schema changes shall be managed through migration files.
+
+Migrations shall allow the project database to be:
+
+Created consistently.
+Updated in a controlled manner.
+Reproduced by another developer.
+Reviewed as part of the project source code.
+18. Frontend Requirements
+FR-28: React Frontend
+
+The frontend shall be implemented using React.
+
+The frontend shall provide pages/interfaces for:
+
+Login
+Registration
+Dashboard
+Products
+Cart
+Orders
+Admin Panel
+
+The frontend shall communicate with backend services through REST APIs.
+
+FR-29: Loading States
+
+The frontend shall display appropriate loading indicators while data is being retrieved or processed.
+
+FR-30: Empty States
+
+The frontend shall provide meaningful messages when there is no available data.
+
+Examples:
+
+Empty cart.
+No orders.
+No products.
+No search results.
+19. Security Requirements
+NFR-01: Password Security
+
+User passwords shall be stored using secure password hashing.
+
+Plain-text passwords shall never be stored in the database.
+
+NFR-02: Authentication Security
+
+Protected resources shall require valid authentication.
+
+JWT tokens shall be validated on the backend.
+
+NFR-03: Authorization
+
+Users shall only access functionality permitted by their assigned role.
+
+NFR-04: Environment Variables
+
+Sensitive configuration values such as:
+
+Database credentials.
+JWT secret.
+API configuration.
+
+shall be stored using environment variables rather than hard-coded in source code.
+
+20. Non-Functional Requirements
+NFR-05: Performance
+
+The application should provide reasonable response times under normal expected usage.
+
+Database queries should be structured efficiently.
+
+NFR-06: Reliability
+
+The application should handle expected errors without crashing.
+
+NFR-07: Maintainability
+
+The backend should follow a modular project structure.
+
+Example:
+
+server/
+├── controllers/
+├── routes/
+├── models/
+├── middleware/
+├── config/
+├── migrations/
+└── app.js
+NFR-08: Scalability
+
+The system should be designed so that additional features can be added without major restructuring.
+
+NFR-09: Usability
+
+The user interface should be simple, consistent, responsive, and easy to navigate.
+
+NFR-10: Data Integrity
+
+The system shall maintain accurate and consistent data through:
+
+Database constraints.
+Foreign keys.
+Validation.
+Transaction handling where required.
+21. Project Scope
+21.1 In Scope
+
+The project includes:
+
+React frontend.
+Node.js backend.
+Express.js REST API.
+PostgreSQL database.
+User registration.
+User login.
+JWT authentication.
+Role-based authorization.
+Product management.
+Product browsing.
+Inventory management.
+Cart management.
+Order management.
+Order status management.
+Stock validation.
+Stock updates.
+Audit activity records.
+Invoice generation.
+Input validation.
+Error handling.
+Loading and empty states.
+Database migrations.
+Testing.
+Documentation.
+GitHub repository.
+Final presentation.
+
+Optional Enhancement:
+
+Docker configuration.
+22. Out of Scope
+
+The following functionality is not included in the initial project scope:
+
+Real payment gateway integration.
+Real banking transactions.
+Real customer financial information.
+Integration with external ERP systems.
+Integration with real distributor systems.
+Unauthorized access to external systems.
+Production-level enterprise infrastructure.
+Real-world customer data without authorization.
+23. Assumptions
+
+The following assumptions apply:
+
+Users have access to a modern web browser.
+Customers provide valid registration information.
+Administrators are assigned appropriate permissions.
+Product information is maintained by authorized administrators.
+Product stock information is maintained by the system.
+PostgreSQL is available during application execution.
+The backend server is available to the React frontend.
+Development data is simulated, public, or properly authorized.
+External resources used during research will be appropriately cited.
+The project will be developed and tested within the internship period.
+24. Constraints
+
+The project has the following constraints:
+
+The internship duration is limited to four weeks.
+The project is developed individually.
+Development must follow the defined project requirements.
+Only authorized, public, or simulated data may be used.
+Real systems must not be tested without explicit authorization.
+The project must maintain organized documentation.
+The project must provide evidence of testing and validation.
+The final project must be reproducible through the provided documentation.
+25. Success Metrics
+
+The following measurable outcomes will be used to evaluate the project:
+
+Metric	Target
+Core frontend modules	All planned modules implemented
+Authentication	Registration and login functional
+JWT Authentication	Successfully implemented
+Role-based access	Customer and Admin permissions enforced
+Product APIs	CRUD operations functional
+Cart	Add, update and remove operations functional
+Orders	Order creation and retrieval functional
+Inventory	Stock validation and update functional
+Audit Logs	Important activities recorded
+Validation	Frontend and backend validation implemented
+Error Handling	Common API errors handled
+Database	PostgreSQL integrated successfully
+Testing	Core workflows tested with evidence
+Documentation	Complete and reproducible
+Presentation	Final project demonstrated
+26. Acceptance Criteria
+
+The project shall meet the following acceptance criteria before final submission.
+
+Authentication
+A new customer can register successfully.
+Existing users can log in.
+Invalid credentials are rejected.
+Passwords are securely stored.
+JWT authentication works correctly.
+Authorization
+Customers cannot access administrative operations.
+Administrators can access authorized administrative functionality.
+Products
+Administrators can create products.
+Administrators can update products.
+Administrators can delete products.
+Customers can view available products.
+Cart
+Customers can add products.
+Customers can modify quantities.
+Customers can remove products.
+Cart totals are calculated correctly.
+Orders
+Customers can place valid orders.
+Orders contain the correct products and quantities.
+Insufficient stock prevents invalid orders.
+Customers can view their order history.
+Administrators can manage order status.
+Inventory
+Stock quantities are maintained.
+Stock is validated before order creation.
+Stock is updated after successful orders.
+Audit
+Important activities are recorded.
+Audit records contain timestamps and relevant user information.
+Validation and Errors
+Required fields are validated.
+Invalid requests are rejected.
+Appropriate error messages are displayed.
+API responses use suitable HTTP status codes.
+Documentation and Evidence
+README is available.
+Project setup instructions are documented.
+API functionality is documented.
+Testing evidence is maintained.
+Work logs are maintained.
+Important design decisions are documented.
+27. Evidence Requirements
+
+To satisfy the internship's evidence-based delivery requirement, the following evidence shall be maintained during development:
+
+Development Evidence
+Screenshots of completed features.
+Git commits.
+API testing results.
+Database screenshots where appropriate.
+UI screenshots.
+Error-handling demonstrations.
+Testing Evidence
+Test cases.
+API test results.
+Authentication tests.
+Authorization tests.
+Product API tests.
+Cart tests.
+Order tests.
+Inventory validation tests.
+Documentation Evidence
+Requirements document.
+Stakeholder analysis.
+ER diagram.
+Architecture diagram.
+API documentation.
+Testing documentation.
+README.
+Decision log.
+Work log.
+28. Development and Delivery Workflow
+
+The project shall follow the following workflow:
+
+Requirements
+     ↓
+Scope Definition
+     ↓
+System Design
+     ↓
+Database Design
+     ↓
+Backend Development
+     ↓
+API Development
+     ↓
+Frontend Integration
+     ↓
+Validation
+     ↓
+Testing
+     ↓
+Refinement
+     ↓
+Documentation
+     ↓
+Final Presentation
+     ↓
+Submission
+29. Project Deliverables
+
+The final project shall contain:
+
+Working React frontend.
+Working Node.js and Express.js backend.
+PostgreSQL database.
+Database migration files.
+REST APIs.
+JWT authentication.
+Role-based authorization.
+Product management.
+Cart management.
+Order management.
+Inventory management.
+Audit activity records.
+Invoice generation.
+Input validation.
+Error handling.
+Testing evidence.
+Requirements documentation.
+ER diagram.
+System architecture documentation.
+API documentation.
+README.
+GitHub repository.
+Dated work log.
+Final presentation.
+30. Future Enhancements
+
+The following features may be considered for future versions:
+
+Payment gateway integration.
+Email notifications.
+SMS notifications.
+Advanced product search and filtering.
+Analytics dashboard.
+Sales reports.
+Customer management.
+Bulk product upload.
+Advanced inventory forecasting.
+Cloud deployment.
+Automated CI/CD pipeline.
+Docker-based deployment.
+31. Conclusion
+
+The B2B Order Management Platform is intended to demonstrate the complete lifecycle of a professional full-stack development project, from requirements analysis and system design to implementation, testing, validation, documentation, and final presentation.
+
+The project will provide a realistic business workflow while demonstrating practical skills in React, Node.js, Express.js, PostgreSQL, REST APIs, JWT authentication, role-based authorization, database management, testing, and professional software documentation.
+
+The final system will be designed as a reproducible, testable, documented, and portfolio-oriented project suitable for mentor review and technical demonstration.
+
+
+
+
+| Version | Date            | Author       | Description                        |
+| ------- | --------------- | ------------ | ---------------------------------- |
+| 1.0     | 03 October 2026 | Nisha Jadhav | Initial Requirements Specification |

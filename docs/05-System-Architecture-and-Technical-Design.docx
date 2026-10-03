@@ -1,0 +1,633 @@
+05 – System Architecture and Technical Design
+1. Document Purpose
+
+This document describes the technical architecture and design of the B2B Order Management Platform.
+
+It defines the major system components, their responsibilities, communication methods, data flow, security mechanisms, database design approach, and technology stack.
+
+The purpose of this document is to provide a technical foundation for implementation, testing, maintenance, and future development.
+
+2. System Overview
+
+The B2B Order Management Platform follows a client-server architecture.
+
+The system consists of three primary layers:
+
+Frontend Layer – Provides the user interface and user interaction.
+Backend Layer – Provides business logic, REST APIs, authentication, authorization, validation, and error handling.
+Database Layer – Stores users, products, inventory, carts, orders, invoices, and audit information.
+
+The general communication flow is:
+
+User → React Frontend → REST API → Express Backend → PostgreSQL Database
+
+The response follows the reverse path:
+
+PostgreSQL Database → Express Backend → REST API → React Frontend → User
+
+3. High-Level Architecture
+
+The system architecture can be represented as follows:
+
+                    B2B Order Management Platform
+
+                            ┌───────────────┐
+                            │     User      │
+                            └───────┬───────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │   React Frontend    │
+                         │                     │
+                         │ Login / Register    │
+                         │ Dashboard           │
+                         │ Products            │
+                         │ Cart                │
+                         │ Orders              │
+                         │ Admin Panel         │
+                         └──────────┬──────────┘
+                                    │
+                              REST API Requests
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │  Node.js + Express  │
+                         │      Backend        │
+                         │                     │
+                         │ Routes              │
+                         │ Controllers         │
+                         │ Middleware          │
+                         │ Authentication      │
+                         │ Authorization       │
+                         │ Validation          │
+                         │ Business Logic      │
+                         └──────────┬──────────┘
+                                    │
+                              SQL Queries
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │     PostgreSQL      │
+                         │      Database       │
+                         │                     │
+                         │ Users               │
+                         │ Products            │
+                         │ Inventory           │
+                         │ Carts               │
+                         │ Orders              │
+                         │ Order Items         │
+                         │ Invoices            │
+                         │ Audit Activities    │
+                         └─────────────────────┘
+
+         4. Frontend Architecture
+
+The frontend is developed using React.
+
+The frontend is responsible for:
+
+Displaying the user interface.
+Managing user interactions.
+Collecting form input.
+Performing client-side validation.
+Sending requests to backend APIs.
+Displaying API responses.
+Managing authentication state.
+Displaying loading, success, and error states.
+Providing different interfaces for customers and administrators.
+Main Frontend Pages
+Login
+Register
+Dashboard
+Products
+Cart
+Orders
+Admin Panel
+Frontend Components
+
+Reusable components may include:
+
+Navigation Bar
+Product Card
+Form Components
+Buttons
+Loading Indicators
+Error Messages
+Order Summary
+Protected Route
+5. Backend Architecture
+
+The backend is developed using Node.js and Express.js.
+
+The backend is responsible for:
+
+Providing REST APIs.
+Processing business logic.
+Authenticating users.
+Authorizing user roles.
+Validating requests.
+Communicating with PostgreSQL.
+Managing products and inventory.
+Processing carts and orders.
+Generating invoice information.
+Recording audit activities.
+Handling errors.
+
+The backend follows a modular structure so that individual responsibilities remain separated and maintainable.
+
+6. Backend Components
+6.1 Routes
+
+Routes define the API endpoints available to the frontend.
+
+Examples include:                
+/api/auth
+/api/users
+/api/products
+/api/cart
+/api/orders
+/api/admin
+/api/invoices
+/api/audit
+
+6.2 Controllers
+
+Controllers handle incoming requests and generate appropriate responses.
+
+Examples:
+
+Authentication Controller
+Product Controller
+Cart Controller
+Order Controller
+Admin Controller
+Invoice Controller
+Audit Controller
+6.3 Middleware
+
+Middleware performs common processing before a request reaches the main business logic.
+
+Examples:
+
+JWT Authentication Middleware
+Role Authorization Middleware
+Request Validation Middleware
+Error Handling Middleware
+6.4 Services
+
+Service modules contain reusable business logic and help keep controllers organized.
+
+Possible services include:
+
+Authentication Service
+Product Service
+Inventory Service
+Cart Service
+Order Service
+Invoice Service
+Audit Service
+7. Database Architecture
+
+PostgreSQL will be used as the primary relational database.
+
+The database will store structured information required for the operation of the platform.
+
+Major entities include:
+
+Users
+Products
+Inventory
+Carts
+Cart Items
+Orders
+Order Items
+Invoices
+Audit Activities
+
+Relationships between these entities will be defined using primary keys and foreign keys.
+
+8. Main Database Entities
+8.1 Users
+
+Stores customer and administrator account information.
+
+Possible fields:
+
+id
+name
+company_name
+email
+phone
+password_hash
+role
+created_at
+updated_at
+8.2 Products
+
+Stores information about products available on the platform.
+
+Possible fields:
+
+id
+name
+description
+price
+stock_quantity
+status
+created_at
+updated_at
+8.3 Carts
+
+Stores customer cart information.
+
+Possible fields:
+
+id
+user_id
+created_at
+updated_at
+8.4 Cart Items
+
+Stores products and quantities associated with a cart.
+
+Possible fields:
+
+id
+cart_id
+product_id
+quantity
+8.5 Orders
+
+Stores customer order information.
+
+Possible fields:
+
+id
+user_id
+total_amount
+status
+created_at
+updated_at
+8.6 Order Items
+
+Stores individual products included in an order.
+
+Possible fields:
+
+id
+order_id
+product_id
+quantity
+unit_price
+subtotal
+8.7 Invoices
+
+Stores invoice-related information associated with an order.
+
+Possible fields:
+
+id
+order_id
+invoice_number
+total_amount
+generated_at
+8.8 Audit Activities
+
+Stores important system activities.
+
+Possible fields:
+
+id
+user_id
+action
+entity_type
+entity_id
+description
+created_at
+9. Authentication Architecture
+
+The platform will use JSON Web Token (JWT) based authentication.
+
+The authentication flow is:
+
+User Login
+     ↓
+Frontend sends credentials
+     ↓
+Backend validates credentials
+     ↓
+Password verification
+     ↓
+JWT token generated
+     ↓
+Token returned to frontend
+     ↓
+Frontend stores authentication state
+     ↓
+Token sent with protected API requests
+     ↓
+Backend validates token
+     ↓
+Request is authorized
+
+Passwords must not be stored as plain text.
+
+A secure password hashing mechanism will be used before storing passwords in the database.
+
+10. Role-Based Access Control
+
+The system will support role-based access control.
+
+The primary roles are:
+
+Customer
+Administrator
+Customer Access
+
+Customers can:
+
+View products
+Manage their cart
+Place orders
+View their orders
+Access their invoice information
+Administrator Access
+
+Administrators can:
+
+Manage products
+Manage inventory
+Manage orders
+Review audit activities
+Access administrative functionality
+
+Role verification will be performed on protected backend routes.
+
+11. REST API Architecture
+
+The frontend and backend will communicate using REST APIs.
+
+Example API structure:
+
+| Method | Endpoint                 | Purpose                 |
+| ------ | ------------------------ | ----------------------- |
+| POST   | `/api/auth/register`     | Register a user         |
+| POST   | `/api/auth/login`        | Authenticate a user     |
+| GET    | `/api/products`          | Get products            |
+| POST   | `/api/products`          | Create a product        |
+| PUT    | `/api/products/:id`      | Update a product        |
+| DELETE | `/api/products/:id`      | Delete a product        |
+| GET    | `/api/cart`              | Get current cart        |
+| POST   | `/api/cart/items`        | Add item to cart        |
+| PUT    | `/api/cart/items/:id`    | Update cart item        |
+| DELETE | `/api/cart/items/:id`    | Remove cart item        |
+| POST   | `/api/orders`            | Create an order         |
+| GET    | `/api/orders`            | Get customer orders     |
+| GET    | `/api/orders/:id`        | Get order details       |
+| GET    | `/api/invoices/:orderId` | Get invoice information |
+
+12. Request and Response Flow
+
+A typical API request follows these steps:
+
+User performs an action on the frontend.
+React sends an HTTP request.
+Express receives the request.
+Authentication middleware verifies the user when required.
+Authorization middleware verifies the user's role.
+Validation middleware validates request data.
+Controller processes the request.
+Service layer performs business logic.
+Database operations are performed.
+Backend sends an HTTP response.
+React processes the response.
+The user interface is updated.
+13. Validation Design
+
+Validation will be implemented at multiple levels.
+
+Frontend Validation
+
+The frontend will validate:
+
+Required fields
+Email format
+Password confirmation
+Quantity values
+Basic input constraints
+Backend Validation
+
+The backend will validate:
+
+Request body data
+User credentials
+Product information
+Stock quantities
+Order information
+Authorization requirements
+
+Backend validation is required because client-side validation alone cannot provide sufficient security.
+
+14. Error Handling Design
+
+The system will provide consistent error handling.
+
+Common error categories include:
+
+Validation errors
+Authentication errors
+Authorization errors
+Resource not found errors
+Database errors
+Server errors
+
+The API should return appropriate HTTP status codes and clear error messages without exposing sensitive implementation details.
+
+15. Inventory and Order Consistency
+
+Inventory management is an important part of the order workflow.
+
+Before creating an order:
+
+The system checks product availability.
+Requested quantity is compared with available stock.
+The order is created only when sufficient stock is available.
+Stock is updated after successful order creation.
+The system should prevent invalid inventory values.
+
+Database transactions may be used for operations where multiple related database changes must remain consistent.
+
+16. Audit Activity Design
+
+Important administrative actions should be recorded in the audit activity system.
+
+Examples include:
+
+Product creation
+Product update
+Product deletion
+Inventory update
+Order status update
+Other important administrative operations
+
+Audit records provide evidence of important system activities and support project review and accountability.
+
+17. Security Design
+
+The following security practices will be applied:
+
+Password hashing
+JWT-based authentication
+Role-based authorization
+Backend request validation
+Protected API routes
+Secure environment variables
+No hard-coded database passwords
+No hard-coded JWT secrets
+Appropriate error responses
+Protection of sensitive user information
+
+Development credentials and secret configuration should not be committed to the public GitHub repository.
+
+
+arrowstack-b2b-order-management/
+│
+├── client/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── context/
+│   │   └── App.jsx
+│   │
+│   └── package.json
+│
+├── server/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   ├── migrations/
+│   ├── app.js
+│   └── package.json
+│
+├── docs/
+│   ├── diagrams/
+│   ├── api/
+│   ├── decisions/
+│   ├── 01-Requirements-Document.docx
+│   ├── 02-Stakeholder-Analysis.docx
+│   ├── 03-Business-Use-Cases.docx
+│   ├── 04-Success-Metrics-and-Acceptance-Criteria.docx
+│   └── 05-System-Architecture-and-Technical-Design.docx
+│
+├── evidence/
+│   ├── screenshots/
+│   ├── test-results/
+│   └── demo/
+│
+├── work-log/
+│
+├── README.md
+├── .gitignore
+└── docker-compose.yml
+
+
+
+Docker configuration is considered an optional enhancement and may be added later if time and project requirements allow.
+
+19. Technology Stack
+
+| Layer                     | Technology                             |
+| ------------------------- | -------------------------------------- |
+| Frontend                  | React                                  |
+| Frontend Build Tool       | Vite                                   |
+| Backend Runtime           | Node.js                                |
+| Backend Framework         | Express.js                             |
+| Database                  | PostgreSQL                             |
+| Authentication            | JWT                                    |
+| API Style                 | REST                                   |
+| Version Control           | Git / GitHub                           |
+| Development Environment   | Visual Studio Code                     |
+| API Testing               | Postman or equivalent API testing tool |
+| Optional Containerization | Docker                                 |
+
+
+20. Deployment Considerations
+
+The project will initially be developed and tested in a local development environment.
+
+The architecture should allow future deployment to a cloud or server environment.
+
+Future deployment may include:
+
+Frontend hosting
+Backend hosting
+Managed PostgreSQL database
+Environment variable configuration
+HTTPS
+Production logging
+Monitoring
+
+Production deployment is outside the initial development scope unless specifically required.
+
+21. Design Principles
+
+The system will follow these principles:
+
+Separation of concerns
+Modular development
+Reusable components
+Secure authentication
+Role-based authorization
+Input validation
+Consistent error handling
+Maintainable code structure
+Database consistency
+Testable functionality
+Clear documentation
+Reproducible development setup
+22. Technical Assumptions
+
+The technical design is based on the following assumptions:
+
+Users have access to a modern web browser.
+The backend server can communicate with the PostgreSQL database.
+Development environment supports Node.js and npm.
+Required environment variables will be configured locally.
+Development and testing will use authorized or simulated data.
+External production systems will not be accessed without appropriate authorization.
+23. Future Technical Enhancements
+
+Potential future technical improvements include:
+
+Docker-based development and deployment
+Automated CI/CD pipeline
+Cloud deployment
+Automated unit and integration testing
+API documentation using OpenAPI/Swagger
+Advanced monitoring and logging
+Redis-based caching
+Email notification service
+Payment gateway integration
+Advanced analytics
+24. Conclusion
+
+The proposed architecture provides a structured foundation for developing the B2B Order Management Platform.
+
+The separation of frontend, backend, and database responsibilities improves maintainability and supports future expansion.
+
+React will provide the user interface, Node.js and Express.js will handle business logic and REST APIs, and PostgreSQL will provide persistent relational data storage.
+
+JWT authentication and role-based authorization will protect application resources, while validation, error handling, inventory consistency, and audit activities will support reliable system operation.
+
+25. Document Control
+
+Document Name: System Architecture and Technical Design
+Project: B2B Order Management Platform
+Version: 1.0
+Date: 03 October 2026
+Author: Nisha Jadhav
+Status: Draft

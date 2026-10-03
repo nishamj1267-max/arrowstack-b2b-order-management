@@ -1,0 +1,378 @@
+Stakeholder Analysis
+B2B Order Management Platform
+
+Project Type: Full Stack Web Application
+Domain: Full Stack Development
+Development Mode: Individual Project
+Author: Nisha Jadhav
+Document Version: 1.0
+Date: 03 October 2026
+
+1. Purpose
+
+This document identifies and analyzes the stakeholders involved in the B2B Order Management Platform.
+
+The purpose of the stakeholder analysis is to understand the individuals or groups affected by the system, their responsibilities, expectations, level of influence, and requirements.
+
+The analysis will help ensure that the system is developed according to the needs of its intended users and business context.
+
+2. Stakeholder Identification
+
+The primary stakeholders identified for the project are:
+
+Customer
+Administrator
+Business Owner
+Developer
+Mentor / Project Reviewer
+
+
+3. Stakeholder Overview
+| Stakeholder       | Role                 | Primary Interest                                  | Influence |
+| ----------------- | -------------------- | ------------------------------------------------- | --------- |
+| Customer          | End User             | Products, cart, orders and invoices               | Medium    |
+| Administrator     | System Manager       | Products, inventory, orders and activities        | High      |
+| Business Owner    | Business Stakeholder | Efficient and controlled order management         | High      |
+| Developer         | System Builder       | Development, quality and maintainability          | High      |
+| Mentor / Reviewer | Project Reviewer     | Requirements, quality, evidence and documentation | High      |
+
+4. Customer
+4.1 Role
+
+The customer is the primary end user of the B2B Order Management Platform.
+
+Customers use the system to browse products, manage their shopping cart, place orders, and view their order information.
+
+4.2 Responsibilities
+
+Customers are responsible for:
+
+Creating an account using valid information.
+Maintaining their login credentials.
+Browsing available products.
+Selecting required products.
+Managing cart quantities.
+Placing valid orders.
+Reviewing order information.
+Monitoring order status.
+4.3 Needs
+
+Customers need:
+
+Simple registration and login.
+Secure authentication.
+Easy product browsing.
+Accurate product information.
+Accurate stock availability.
+Simple cart management.
+Reliable order placement.
+Access to order history.
+Clear order status.
+Access to invoices.
+4.4 Expectations
+
+Customers expect:
+
+A simple and user-friendly interface.
+Fast response from the application.
+Accurate product and pricing information.
+Reliable order processing.
+Clear error messages.
+Secure handling of their information.
+4.5 Project Impact
+
+Customer requirements directly influence the design of:
+
+Login and registration.
+Product pages.
+Cart functionality.
+Order functionality.
+Dashboard.
+User experience.
+Validation and error handling.
+
+
+
+5. Administrator
+5.1 Role
+
+The administrator is responsible for managing the operational data and administrative functions of the platform.
+
+5.2 Responsibilities
+
+The administrator can:
+
+Manage products.
+Manage product information.
+Manage inventory.
+Monitor stock quantities.
+View customer orders.
+Update order statuses.
+Monitor system activities.
+Review audit records.
+5.3 Needs
+
+Administrators need:
+
+Secure administrative login.
+Role-based access control.
+Product management functionality.
+Inventory management.
+Order management.
+Audit records.
+Clear administrative interfaces.
+Reliable data.
+5.4 Expectations
+
+Administrators expect:
+
+Accurate inventory information.
+Controlled access to administrative features.
+Reliable CRUD operations.
+Clear system feedback.
+Proper activity tracking.
+Efficient order management.
+
+
+5.5 Project Impact
+
+Administrator requirements directly influence:
+
+Admin Panel.
+Product APIs.
+Inventory APIs.
+Order management APIs.
+Role-based authorization.
+Audit logs.
+Database design.
+
+6. Business Owner
+
+6.1 Role
+
+The business owner represents the business perspective of the system.
+
+The business owner is interested in improving the efficiency, visibility, and reliability of the B2B ordering process.
+
+6.2 Responsibilities
+
+The business owner may be responsible for:
+
+Defining business requirements.
+Monitoring business operations.
+Reviewing order activity.
+Monitoring inventory.
+Evaluating system effectiveness.
+
+
+6.3 Needs
+
+The business owner needs:
+
+Centralized order management.
+Accurate inventory information.
+Reliable order records.
+Controlled administrative access.
+Activity traceability.
+Easy access to operational information.
+
+
+6.4 Expectations
+
+The business owner expects the system to:
+
+Reduce manual order management.
+Improve order visibility.
+Reduce common ordering errors.
+Maintain accurate records.
+Provide a structured workflow.
+Support future expansion.
+
+
+6.5 Project Impact
+
+Business requirements influence:
+
+Overall system architecture.
+Product management.
+Inventory management.
+Order workflow.
+Audit activity records.
+Data model.
+Success metrics.
+
+
+7. Developer
+
+7.1 Role
+
+The developer is responsible for designing, implementing, testing, documenting, and maintaining the application.
+
+In this internship project, the project is developed individually.
+
+7.2 Responsibilities
+
+The developer is responsible for:
+
+Requirement analysis.
+Scope planning.
+System design.
+Frontend development.
+Backend development.
+Database implementation.
+API development.
+Authentication.
+Authorization.
+Validation.
+Error handling.
+Testing.
+Documentation.
+Git version control.
+Final presentation.
+
+
+7.3 Needs
+
+The developer needs:
+
+Clearly defined requirements.
+Appropriate development tools.
+Documentation.
+Version control.
+Development environment.
+Database environment.
+Testing tools.
+
+
+7.4 Expectations
+
+The developer is expected to:
+
+Follow the defined requirements.
+Maintain organized project files.
+Use professional development practices.
+Maintain a dated work log.
+Document important decisions.
+Test implemented functionality.
+Maintain evidence of development and validation.
+Produce reproducible project documentation.
+
+
+7.5 Project Impact
+
+Developer responsibilities affect every technical component of the system.
+
+8. Mentor / Project Reviewer
+8.1 Role
+
+The mentor or project reviewer evaluates the project implementation, documentation, evidence, and final outcome.
+
+8.2 Responsibilities
+
+The mentor/reviewer may:
+
+Review project requirements.
+Review implementation progress.
+Review technical decisions.
+Review testing evidence.
+Evaluate project documentation.
+Provide feedback.
+Review the final presentation.
+8.3 Needs
+
+The mentor/reviewer needs:
+
+Clear requirements documentation.
+Organized project structure.
+Reproducible setup instructions.
+Testing evidence.
+Technical documentation.
+Clear explanation of design decisions.
+Final presentation.
+8.4 Expectations
+
+The mentor/reviewer expects:
+
+Requirements to be clearly defined.
+Features to be implemented according to scope.
+Evidence to support completed work.
+Testing to be documented.
+Project files to be organized.
+Technical decisions to be explainable.
+Limitations to be clearly identified.
+8.5 Project Impact
+
+Mentor requirements influence:
+
+Documentation quality.
+Testing strategy.
+Evidence collection.
+Work logs.
+Decision logs.
+README.
+Final presentation.
+
+
+9. Stakeholder Needs Matrix
+
+| Stakeholder       | Functional Needs                        | Quality Needs                    | Key Deliverables                     |
+| ----------------- | --------------------------------------- | -------------------------------- | ------------------------------------ |
+| Customer          | Products, Cart, Orders, Invoices        | Security, usability, reliability | Customer-facing application          |
+| Administrator     | Products, Inventory, Orders, Audit Logs | Security, accuracy, control      | Admin panel and APIs                 |
+| Business Owner    | Order and inventory visibility          | Reliability, traceability        | Business workflow                    |
+| Developer         | Requirements, tools, architecture       | Maintainability, scalability     | Source code and documentation        |
+| Mentor / Reviewer | Requirements, evidence, testing         | Reproducibility, clarity         | Documentation and final presentation |
+
+
+10. Stakeholder Influence and Interest
+
+| Stakeholder       | Influence | Interest | Management Approach                                        |
+| ----------------- | --------- | -------- | ---------------------------------------------------------- |
+| Customer          | Medium    | High     | Understand user needs and provide simple workflows         |
+| Administrator     | High      | High     | Provide secure and efficient management features           |
+| Business Owner    | High      | High     | Align system functionality with business objectives        |
+| Developer         | High      | High     | Maintain technical quality and project scope               |
+| Mentor / Reviewer | High      | High     | Provide clear evidence, documentation and progress updates |
+
+
+11. Stakeholder Communication Plan
+
+Professional communication and progress reporting are important parts of the project.
+
+| Stakeholder       | Information Shared                                | Communication Method           | Frequency                 |
+| ----------------- | ------------------------------------------------- | ------------------------------ | ------------------------- |
+| Customer          | Feature requirements and usability considerations | Requirement analysis           | As required               |
+| Administrator     | Administrative workflows                          | Requirement analysis / testing | As required               |
+| Business Owner    | Business requirements and project progress        | Documentation / review         | During milestones         |
+| Mentor / Reviewer | Progress, decisions, testing and evidence         | Progress updates / review      | Weekly or milestone-based |
+| Developer         | Technical tasks and decisions                     | Work log / Git commits         | Daily development         |
+
+
+12. Stakeholder Risks
+
+| Stakeholder       | Potential Risk              | Mitigation                                          |
+| ----------------- | --------------------------- | --------------------------------------------------- |
+| Customer          | Difficult user experience   | Use simple UI and validation                        |
+| Administrator     | Unauthorized access         | Implement JWT and role-based authorization          |
+| Business Owner    | Incorrect business workflow | Clearly define requirements and acceptance criteria |
+| Developer         | Scope expansion             | Define and maintain project scope                   |
+| Mentor / Reviewer | Insufficient evidence       | Maintain work logs, screenshots and test results    |
+
+
+13. Stakeholder Analysis Summary
+
+The project requires consideration of both technical and business stakeholders.
+
+Customers primarily require a simple and reliable ordering experience, while administrators require secure tools for managing products, inventory, and orders.
+
+The business owner requires visibility and control over the ordering workflow. The developer is responsible for implementing the system according to the defined requirements and maintaining technical quality. The mentor or reviewer requires clear documentation, evidence, testing results, and a reproducible project.
+
+Understanding these stakeholder requirements will help guide the system design, feature prioritization, testing, and final project evaluation.
+
+
+
+14. Document Control
+
+| Version | Date            | Author       | Description                  |
+| ------- | --------------- | ------------ | ---------------------------- |
+| 1.0     | 03 October 2026 | Nisha Jadhav | Initial Stakeholder Analysis |

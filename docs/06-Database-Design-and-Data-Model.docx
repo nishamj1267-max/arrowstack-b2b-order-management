@@ -1,0 +1,553 @@
+06 – Database Design and Data Model
+1. Document Purpose
+
+This document defines the database design and data model for the B2B Order Management Platform.
+
+It describes the main database entities, attributes, relationships, constraints, and data management approach required to support users, products, inventory, carts, orders, invoices, and audit activities.
+
+The database will use PostgreSQL as the primary relational database management system.
+
+2. Database Objectives
+
+The database design aims to:
+
+Store application data in a structured format.
+Maintain relationships between related business entities.
+Prevent invalid or inconsistent data.
+Support customer and administrator workflows.
+Maintain order and inventory consistency.
+Support authentication and authorization.
+Store invoice information.
+Maintain audit activity records.
+Support efficient data retrieval.
+Provide a foundation for future system expansion.
+3. Database Technology
+
+Database Management System: PostgreSQL
+
+PostgreSQL is selected because it provides:
+
+Relational data management
+Primary and foreign key constraints
+Transaction support
+Data integrity
+Structured query capabilities
+Support for scalable application development
+4. Main Database Entities
+
+The initial database will contain the following major entities:
+
+Users
+Products
+Carts
+Cart Items
+Orders
+Order Items
+Invoices
+Audit Activities
+5. Entity Relationship Overview
+
+The main relationships are:
+
+Users
+  │
+  ├───────────────┐
+  │               │
+  ▼               ▼
+Carts            Orders
+  │               │
+  ▼               ├──────────────┐
+Cart Items        │              │
+  │               ▼              ▼
+  ▼          Order Items       Invoices
+Products
+  ▲
+  │
+  │
+Inventory is maintained through product stock information
+
+Users
+  │
+  ▼
+Audit Activities
+
+6. Users Table
+Table Name
+
+users
+
+Purpose
+
+Stores customer and administrator account information.
+
+Columns
+
+| Column        | Data Type    | Constraints      | Description            |
+| ------------- | ------------ | ---------------- | ---------------------- |
+| id            | BIGSERIAL    | PRIMARY KEY      | Unique user identifier |
+| name          | VARCHAR(100) | NOT NULL         | User's full name       |
+| company_name  | VARCHAR(150) | NOT NULL         | Customer company name  |
+| email         | VARCHAR(150) | UNIQUE, NOT NULL | User email address     |
+| phone         | VARCHAR(20)  | NOT NULL         | User phone number      |
+| password_hash | TEXT         | NOT NULL         | Hashed password        |
+| role          | VARCHAR(20)  | NOT NULL         | User role              |
+| created_at    | TIMESTAMP    | NOT NULL         | Account creation time  |
+| updated_at    | TIMESTAMP    | NOT NULL         | Last update time       |
+
+
+Role Values
+
+The initial supported roles are:
+
+customer
+admin
+
+7. Products Table
+Table Name
+
+products
+
+Purpose
+
+Stores information about products available for purchase.
+
+Columns
+
+| Column         | Data Type     | Constraints | Description                 |
+| -------------- | ------------- | ----------- | --------------------------- |
+| id             | BIGSERIAL     | PRIMARY KEY | Unique product identifier   |
+| name           | VARCHAR(150)  | NOT NULL    | Product name                |
+| description    | TEXT          | NULL        | Product description         |
+| price          | NUMERIC(12,2) | NOT NULL    | Product price               |
+| stock_quantity | INTEGER       | NOT NULL    | Available stock             |
+| status         | VARCHAR(20)   | NOT NULL    | Product availability status |
+| created_at     | TIMESTAMP     | NOT NULL    | Product creation time       |
+| updated_at     | TIMESTAMP     | NOT NULL    | Last update time            |
+
+
+8. Carts Table
+Table Name
+
+carts
+
+Purpose
+
+Stores the shopping cart associated with a customer.
+
+Columns
+
+| Column     | Data Type | Constraints                   | Description                       |
+| ---------- | --------- | ----------------------------- | --------------------------------- |
+| id         | BIGSERIAL | PRIMARY KEY                   | Unique cart identifier            |
+| user_id    | BIGINT    | FOREIGN KEY, NOT NULL, UNIQUE | Customer associated with the cart |
+| created_at | TIMESTAMP | NOT NULL                      | Cart creation time                |
+| updated_at | TIMESTAMP | NOT NULL                      | Last cart update time             |
+
+
+Relationship
+
+One user can have one active cart.
+
+users 1 ───────── 1 carts
+
+9. Cart Items Table
+Table Name
+
+cart_items
+
+Purpose
+
+Stores products and quantities added to customer carts.
+
+Columns
+
+| Column     | Data Type | Constraints           | Description                 |
+| ---------- | --------- | --------------------- | --------------------------- |
+| id         | BIGSERIAL | PRIMARY KEY           | Unique cart item identifier |
+| cart_id    | BIGINT    | FOREIGN KEY, NOT NULL | Associated cart             |
+| product_id | BIGINT    | FOREIGN KEY, NOT NULL | Associated product          |
+| quantity   | INTEGER   | NOT NULL              | Requested quantity          |
+
+
+carts 1 ───────── many cart_items
+
+products 1 ───── many cart_items
+
+A unique constraint on (cart_id, product_id) should be considered to prevent duplicate entries for the same product in one cart.
+
+10. Orders Table
+Table Name
+
+orders
+
+Purpose
+
+Stores customer order information.
+
+Columns
+
+| Column       | Data Type     | Constraints           | Description                   |
+| ------------ | ------------- | --------------------- | ----------------------------- |
+| id           | BIGSERIAL     | PRIMARY KEY           | Unique order identifier       |
+| user_id      | BIGINT        | FOREIGN KEY, NOT NULL | Customer who placed the order |
+| total_amount | NUMERIC(12,2) | NOT NULL              | Total order amount            |
+| status       | VARCHAR(30)   | NOT NULL              | Current order status          |
+| created_at   | TIMESTAMP     | NOT NULL              | Order creation time           |
+| updated_at   | TIMESTAMP     | NOT NULL              | Last order update time        |
+
+
+Possible Order Status Values
+pending
+confirmed
+processing
+shipped
+delivered
+cancelled
+
+The exact workflow may be adjusted during backend implementation.
+
+Relationship
+users 1 ───────── many orders
+11. Order Items Table
+Table Name
+
+order_items
+
+Purpose
+
+Stores individual products included in an order.
+
+Columns
+
+| Column     | Data Type     | Constraints           | Description                       |
+| ---------- | ------------- | --------------------- | --------------------------------- |
+| id         | BIGSERIAL     | PRIMARY KEY           | Unique order item identifier      |
+| order_id   | BIGINT        | FOREIGN KEY, NOT NULL | Associated order                  |
+| product_id | BIGINT        | FOREIGN KEY, NOT NULL | Ordered product                   |
+| quantity   | INTEGER       | NOT NULL              | Ordered quantity                  |
+| unit_price | NUMERIC(12,2) | NOT NULL              | Product price at order time       |
+| subtotal   | NUMERIC(12,2) | NOT NULL              | Quantity multiplied by unit price |
+
+
+
+Relationships
+orders 1 ───────── many order_items
+
+products 1 ────── many order_items
+Important Design Decision
+
+unit_price is stored in order_items instead of relying only on the current product price.
+
+This preserves the price that was applicable when the order was placed, even if the product price changes later.
+
+12. Invoices Table
+Table Name
+
+invoices
+
+Purpose
+
+Stores invoice information associated with an order.
+
+Columns
+
+| Column         | Data Type     | Constraints                   | Description               |
+| -------------- | ------------- | ----------------------------- | ------------------------- |
+| id             | BIGSERIAL     | PRIMARY KEY                   | Unique invoice identifier |
+| order_id       | BIGINT        | FOREIGN KEY, UNIQUE, NOT NULL | Associated order          |
+| invoice_number | VARCHAR(50)   | UNIQUE, NOT NULL              | Unique invoice number     |
+| total_amount   | NUMERIC(12,2) | NOT NULL                      | Invoice total             |
+| generated_at   | TIMESTAMP     | NOT NULL                      | Invoice generation time   |
+
+
+Relationship
+orders 1 ───────── 1 invoices
+
+One order is associated with one invoice in the initial system design.
+
+13. Audit Activities Table
+Table Name
+
+audit_activities
+
+Purpose
+
+Stores important user and administrator activities for traceability.
+
+Columns
+
+| Column      | Data Type    | Constraints       | Description                   |
+| ----------- | ------------ | ----------------- | ----------------------------- |
+| id          | BIGSERIAL    | PRIMARY KEY       | Unique activity identifier    |
+| user_id     | BIGINT       | FOREIGN KEY, NULL | User who performed the action |
+| action      | VARCHAR(100) | NOT NULL          | Action performed              |
+| entity_type | VARCHAR(50)  | NULL              | Type of affected entity       |
+| entity_id   | BIGINT       | NULL              | ID of affected entity         |
+| description | TEXT         | NULL              | Activity description          |
+| created_at  | TIMESTAMP    | NOT NULL          | Activity time                 |
+
+Examples of Activities
+Product created
+Product updated
+Product deleted
+Inventory updated
+Order status updated
+User login
+Administrative action performed
+14. Primary Key Design
+
+Every major table will have a unique primary key.
+
+Primary keys:
+
+users.id
+products.id
+carts.id
+cart_items.id
+orders.id
+order_items.id
+invoices.id
+audit_activities.id
+
+Primary keys ensure that each record can be uniquely identified.
+
+15. Foreign Key Relationships
+
+Foreign keys will maintain relationships between related tables.
+
+| Table            | Foreign Key | References  |
+| ---------------- | ----------- | ----------- |
+| carts            | user_id     | users.id    |
+| cart_items       | cart_id     | carts.id    |
+| cart_items       | product_id  | products.id |
+| orders           | user_id     | users.id    |
+| order_items      | order_id    | orders.id   |
+| order_items      | product_id  | products.id |
+| invoices         | order_id    | orders.id   |
+| audit_activities | user_id     | users.id    |
+
+
+16. Relationship Summary
+
+The main relationships are:
+
+User
+ │
+ ├── 1 : 1 ── Cart
+ │              │
+ │              └── 1 : Many ── Cart Items ── Many : 1 ── Product
+ │
+ ├── 1 : Many ── Orders
+ │                  │
+ │                  ├── 1 : Many ── Order Items ── Many : 1 ── Product
+ │                  │
+ │                  └── 1 : 1 ── Invoice
+ │
+ └── 1 : Many ── Audit Activities
+
+ 17. Data Integrity Rules
+
+The database should enforce important integrity rules.
+
+Examples include:
+
+User email must be unique.
+User name cannot be empty.
+Product name cannot be empty.
+Product price must be greater than or equal to zero.
+Product stock quantity cannot be negative.
+Cart quantity must be greater than zero.
+Order quantity must be greater than zero.
+Order total must be greater than or equal to zero.
+Invoice number must be unique.
+Required foreign key relationships must reference existing records.
+18. Inventory Rules
+
+Inventory data must remain consistent with order processing.
+
+The following rules apply:
+
+Stock quantity cannot be negative.
+Customers cannot place an order exceeding available stock.
+Stock should be reduced after a successful order.
+Failed order operations should not incorrectly reduce stock.
+Administrators can update stock through authorized functionality.
+Inventory updates should be recorded when appropriate.
+19. Order Data Rules
+
+The order system should follow these rules:
+
+Every order must belong to a valid customer.
+Every order must contain at least one order item.
+Every order item must reference a valid product.
+Quantity must be greater than zero.
+Unit price must be stored at the time of ordering.
+Order total should be calculated from order items.
+Order status must contain a valid status value.
+Order information should not be accessible to unauthorized customers.
+20. Database Transaction Requirements
+
+Certain operations involve multiple database changes and should be handled using database transactions.
+
+For example, order creation may require:
+
+Begin Transaction
+      ↓
+Validate Product Stock
+      ↓
+Create Order
+      ↓
+Create Order Items
+      ↓
+Update Product Stock
+      ↓
+Create Invoice Information
+      ↓
+Record Audit Activity
+      ↓
+Commit Transaction
+If a critical operation fails, the transaction should be rolled back where appropriate to prevent inconsistent data.
+
+21. Database Migration Strategy
+
+Database schema changes will be maintained through migration files.
+
+Migrations may be used for:
+
+Creating tables
+Adding columns
+Modifying constraints
+Creating indexes
+Updating database structure
+
+Each migration should have a clear and descriptive name.
+
+Example:
+
+001-create-users-table
+002-create-products-table
+003-create-carts-table
+004-create-cart-items-table
+005-create-orders-table
+006-create-order-items-table
+007-create-invoices-table
+008-create-audit-activities-table
+
+The exact migration tool will be selected during backend implementation.
+
+22. Indexing Considerations
+
+Indexes may be created for frequently searched or joined fields.
+
+Potential indexes include:
+
+users.email
+products.name
+orders.user_id
+orders.status
+order_items.order_id
+cart_items.cart_id
+audit_activities.user_id
+audit_activities.created_at
+
+Indexes will be added based on application requirements and observed query usage.
+
+23. Data Security
+
+The following database security practices will be followed:
+
+Passwords will be stored only as secure hashes.
+Database credentials will not be hard-coded into application source code.
+Sensitive configuration will use environment variables.
+Database access will be restricted to the backend application.
+SQL operations will use safe parameterized queries or an appropriate database abstraction layer.
+Unauthorized users will not receive direct database access.
+Development data will be controlled and authorized.
+24. Data Lifecycle
+
+The general data lifecycle is:
+
+User Input
+    ↓
+Frontend Validation
+    ↓
+Backend Validation
+    ↓
+Business Logic
+    ↓
+Database Operation
+    ↓
+Data Stored / Updated
+    ↓
+API Response
+    ↓
+Frontend Display
+
+
+For orders:
+
+Product Selection
+    ↓
+Cart
+    ↓
+Order Creation
+    ↓
+Inventory Update
+    ↓
+Invoice
+    ↓
+Order History
+    ↓
+Audit Activity
+25. Database Backup Considerations
+
+During local development, database backups may be created when required.
+
+For future production deployment, a proper backup strategy should include:
+
+Regular automated backups
+Backup retention
+Recovery procedures
+Secure backup storage
+Periodic restoration testing
+
+Production backup configuration is outside the initial internship implementation scope.
+
+26. Future Database Enhancements
+
+Potential future enhancements include:
+
+Product categories
+Multiple product images
+Suppliers
+Addresses
+Payment records
+Shipment tracking
+Notifications
+Discount and coupon management
+Purchase history analytics
+Advanced reporting
+Soft-delete support
+Database performance optimization
+27. Data Model Summary
+
+The database design provides a relational structure for the complete B2B order workflow.
+
+The users table manages system users, while products stores product and inventory information.
+
+carts and cart_items support customer cart management.
+
+orders and order_items store customer purchases, while invoices maintain invoice information.
+
+audit_activities provides traceability for important system actions.
+
+Foreign keys, constraints, validation rules, and transactions will help maintain data consistency throughout the application.
+
+28. Document Control
+
+Document Name: Database Design and Data Model
+Project: B2B Order Management Platform
+Version: 1.0
+Date: 03 October 2026
+Author: Nisha Jadhav
+Status: Draft
