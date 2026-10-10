@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import Sidebar from "../components/Sidebar";
@@ -10,7 +11,10 @@ function Cart() {
     increaseQty,
     decreaseQty,
     removeItem,
+    clearCart,
   } = useCart();
+
+  const [loading, setLoading] = useState(false);
 
   const formatPrice = (amount) =>
     `₹${Number(amount).toLocaleString("en-IN", {
@@ -24,6 +28,54 @@ function Cart() {
 
   const gst = Math.round(subtotal * 0.18);
   const total = subtotal + gst;
+
+  const handleCheckout = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please log in before placing your order.");
+      return;
+    }
+
+    if (cart.length === 0) {
+      alert("Your cart is empty.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await fetch("http://localhost:5000/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          items: cart.map((item) => ({
+            product_id: Number(item.id),
+            quantity: Number(item.qty),
+          })),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Unable to place order.");
+      }
+
+      clearCart();
+
+      alert(
+        `Order placed successfully!\nOrder ID: ${data.order.id}\nTotal: ${formatPrice(data.order.total_amount)}`
+      );
+    } catch (error) {
+      alert(error.message || "Unable to connect to the server.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="dashboard-layout">
@@ -42,10 +94,7 @@ function Cart() {
           {cart.length === 0 ? (
             <div className="cart-empty">
               <h2>Your cart is empty</h2>
-
-              <p>
-                You haven't added any products to your cart yet.
-              </p>
+              <p>You haven't added any products to your cart yet.</p>
 
               <Link to="/products" className="checkout-btn">
                 Browse Products
@@ -127,11 +176,10 @@ function Cart() {
                 <button
                   type="button"
                   className="checkout-btn"
-                  onClick={() => {
-                    alert("Checkout integration is coming next.");
-                  }}
+                  onClick={handleCheckout}
+                  disabled={loading}
                 >
-                  Proceed to Checkout
+                  {loading ? "Placing Order..." : "Proceed to Checkout"}
                 </button>
 
                 <Link to="/products" className="continue-shopping">

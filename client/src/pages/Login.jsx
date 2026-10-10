@@ -12,22 +12,52 @@ function Login() {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = () => {
-    if (!form.email || !form.password) {
+  const handleLogin = async () => {
+    if (!form.email.trim() || !form.password) {
       alert("Please enter Email and Password!");
       return;
     }
 
-    navigate("/dashboard");
+    try {
+      setLoading(true);
+
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: form.email.trim(),
+          password: form.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Login failed.");
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      alert("Login successful!");
+      navigate("/dashboard");
+    } catch (error) {
+      alert(error.message || "Unable to connect to the server.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="auth-page">
-      {/* Left Branding */}
       <div className="auth-left">
         <div className="brand-box">
           <h1>ArrowStack</h1>
@@ -38,18 +68,17 @@ function Login() {
           </p>
 
           <div className="feature-list">
-            <span>📦 Product Management</span>
-            <span>🛒 Smart Orders</span>
-            <span>📊 Live Dashboard</span>
-            <span>🚀 Fast & Secure</span>
+            <span>Product Management</span>
+            <span>Smart Orders</span>
+            <span>Live Dashboard</span>
+            <span>Fast &amp; Secure</span>
           </div>
         </div>
       </div>
 
-      {/* Right Login Card */}
       <div className="auth-right">
         <div className="login-card">
-          <h2>Welcome Back 👋</h2>
+          <h2>Welcome Back!</h2>
           <p>Login to continue</p>
 
           <Input
@@ -68,13 +97,16 @@ function Login() {
             onChange={handleChange}
           />
 
-          <Button text="Login" onClick={handleLogin} />
+          <Button
+            text={loading ? "Logging in..." : "Login"}
+            onClick={handleLogin}
+          />
 
           <div className="divider">
             <span>OR</span>
           </div>
 
-          <button className="social-btn google-btn">
+          <button type="button" className="social-btn google-btn">
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
@@ -82,7 +114,7 @@ function Login() {
             Continue with Google
           </button>
 
-          <button className="social-btn facebook-btn">
+          <button type="button" className="social-btn facebook-btn">
             <img
               src="https://www.svgrepo.com/show/475647/facebook-color.svg"
               alt="Facebook"

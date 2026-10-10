@@ -17,24 +17,30 @@ function Register() {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-
-    // Error type kartana remove hoil
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const validate = () => {
-    let newErrors = {};
+    const newErrors = {};
 
     if (!form.name.trim()) newErrors.name = "Full Name is required";
     if (!form.company.trim()) newErrors.company = "Company Name is required";
-    if (!form.email.trim()) newErrors.email = "Email is required";
+
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) {
+      newErrors.email = "Enter a valid email address";
+    }
+
     if (!form.phone.trim()) newErrors.phone = "Phone Number is required";
     if (!form.password) newErrors.password = "Password is required";
-    if (!form.confirmPassword)
+    if (!form.confirmPassword) {
       newErrors.confirmPassword = "Confirm Password is required";
+    }
 
     if (
       form.password &&
@@ -45,15 +51,56 @@ function Register() {
     }
 
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!validate()) return;
 
-    alert("Account created successfully!");
-    navigate("/");
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        "http://localhost:5000/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: form.name.trim(),
+            company_name: form.company.trim(),
+            email: form.email.trim(),
+            phone: form.phone.trim(),
+            password: form.password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        if (data.errors) {
+          const apiErrors = {};
+          data.errors.forEach((error) => {
+            const field = error.path || error.param;
+            if (field && !apiErrors[field]) {
+              apiErrors[field] = error.msg;
+            }
+          });
+          setErrors((previous) => ({ ...previous, ...apiErrors }));
+        }
+
+        throw new Error(data.message || "Registration failed");
+      }
+
+      alert("Account registered successfully! Please log in.");
+      navigate("/");
+    } catch (error) {
+      alert(error.message || "Unable to connect to the server.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -116,7 +163,10 @@ function Register() {
           <p className="error-text">{errors.confirmPassword}</p>
         )}
 
-        <Button text="Create Account" onClick={handleRegister} />
+        <Button
+          text={loading ? "Creating Account..." : "Create Account"}
+          onClick={handleRegister}
+        />
 
         <p className="link-text">
           Already have an account? <Link to="/">Login</Link>
