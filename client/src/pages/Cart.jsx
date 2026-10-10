@@ -1,54 +1,27 @@
 
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
 function Cart() {
-  const [cart, setCart] = useState([
-    {
-      id: 1,
-      name: "Dell Laptop",
-      category: "Electronics",
-      price: 55000,
-      qty: 1,
-      image: "https://picsum.photos/120?1",
-    },
-    {
-      id: 2,
-      name: "Wireless Mouse",
-      category: "Accessories",
-      price: 1200,
-      qty: 2,
-      image: "https://picsum.photos/120?2",
-    },
-  ]);
+  const {
+    cart,
+    increaseQty,
+    decreaseQty,
+    removeItem,
+  } = useCart();
 
-  const increaseQty = (id) => {
-    setCart(
-      cart.map((item) =>
-        item.id === id ? { ...item, qty: item.qty + 1 } : item
-      )
-    );
-  };
-
-  const decreaseQty = (id) => {
-    setCart(
-      cart.map((item) =>
-        item.id === id && item.qty > 1
-          ? { ...item, qty: item.qty - 1 }
-          : item
-      )
-    );
-  };
-
-  const removeItem = (id) => {
-    setCart(cart.filter((item) => item.id !== id));
-  };
+  const formatPrice = (amount) =>
+    `₹${Number(amount).toLocaleString("en-IN", {
+      maximumFractionDigits: 2,
+    })}`;
 
   const subtotal = cart.reduce(
-    (sum, item) => sum + item.price * item.qty,
+    (sum, item) => sum + Number(item.price) * item.qty,
     0
   );
+
   const gst = Math.round(subtotal * 0.18);
   const total = subtotal + gst;
 
@@ -61,69 +34,112 @@ function Cart() {
 
         <div className="dashboard-body">
           <h1>Shopping Cart</h1>
+
           <p className="dashboard-subtitle">
             Review your selected products before checkout.
           </p>
 
-          <div className="cart-layout">
-            <div className="cart-items">
-              {cart.map((item) => (
-                <div className="cart-card" key={item.id}>
-                  <img src={item.image} alt={item.name} />
+          {cart.length === 0 ? (
+            <div className="cart-empty">
+              <h2>Your cart is empty</h2>
 
-                  <div className="cart-info">
-                    <h3>{item.name}</h3>
-                    <p>{item.category}</p>
-                    <span>₹{item.price.toLocaleString()}</span>
-                  </div>
+              <p>
+                You haven't added any products to your cart yet.
+              </p>
 
-                  <div className="qty-box">
-                    <button onClick={() => decreaseQty(item.id)}>
-                      −
+              <Link to="/products" className="checkout-btn">
+                Browse Products
+              </Link>
+            </div>
+          ) : (
+            <div className="cart-layout">
+              <div className="cart-items">
+                {cart.map((item) => (
+                  <div className="cart-card" key={item.id}>
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      onError={(e) => {
+                        e.currentTarget.style.visibility = "hidden";
+                      }}
+                    />
+
+                    <div className="cart-info">
+                      <h3>{item.name}</h3>
+                      <p>{item.category}</p>
+                      <span>{formatPrice(item.price)}</span>
+                    </div>
+
+                    <div className="qty-box">
+                      <button
+                        type="button"
+                        onClick={() => decreaseQty(item.id)}
+                        disabled={item.qty <= 1}
+                        aria-label={`Decrease quantity of ${item.name}`}
+                      >
+                        −
+                      </button>
+
+                      <span>{item.qty}</span>
+
+                      <button
+                        type="button"
+                        onClick={() => increaseQty(item.id)}
+                        disabled={item.qty >= item.stock_quantity}
+                        aria-label={`Increase quantity of ${item.name}`}
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="remove-btn"
+                      onClick={() => removeItem(item.id)}
+                      aria-label={`Remove ${item.name} from cart`}
+                    >
+                      🗑
                     </button>
-
-                    <span>{item.qty}</span>
-
-                    <button onClick={() => increaseQty(item.id)}>
-                      +
-                    </button>
                   </div>
+                ))}
+              </div>
 
-                  <button
-                    className="remove-btn"
-                    onClick={() => removeItem(item.id)}
-                  >
-                    🗑
-                  </button>
+              <div className="summary-card">
+                <h2>Order Summary</h2>
+
+                <div className="summary-row">
+                  <span>Subtotal</span>
+                  <span>{formatPrice(subtotal)}</span>
                 </div>
-              ))}
+
+                <div className="summary-row">
+                  <span>GST (18%)</span>
+                  <span>{formatPrice(gst)}</span>
+                </div>
+
+                <hr />
+
+                <div className="summary-total">
+                  <span>Total</span>
+                  <span>{formatPrice(total)}</span>
+                </div>
+
+                <button
+                  type="button"
+                  className="checkout-btn"
+                  onClick={() => {
+                    alert("Checkout integration is coming next.");
+                  }}
+                >
+                  Proceed to Checkout
+                </button>
+
+                <Link to="/products" className="continue-shopping">
+                  Continue Shopping
+                </Link>
+              </div>
             </div>
-
-            <div className="summary-card">
-              <h2>Order Summary</h2>
-
-              <div className="summary-row">
-                <span>Subtotal</span>
-                <span>₹{subtotal.toLocaleString()}</span>
-              </div>
-
-              <div className="summary-row">
-                <span>GST (18%)</span>
-                <span>₹{gst.toLocaleString()}</span>
-              </div>
-
-              <hr />
-
-              <div className="summary-total">
-                <span>Total</span>
-                <span>₹{total.toLocaleString()}</span>
-              </div>
-
-              <button className="checkout-btn">
-                Proceed to Checkout
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

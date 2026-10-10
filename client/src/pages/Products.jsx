@@ -1,65 +1,59 @@
 
-import { useState } from "react";
+import { useCart } from "../context/CartContext";
+import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
-function Products() {
-  const products = [
-    {
-      id: 1,
-      name: "Dell Laptop",
-      category: "Electronics",
-      price: "₹55,000",
-      stock: 12,
-      image: "https://picsum.photos/300/200?random=1",
-    },
-    {
-      id: 2,
-      name: "Wireless Mouse",
-      category: "Accessories",
-      price: "₹1,200",
-      stock: 35,
-      image: "https://picsum.photos/300/200?random=2",
-    },
-    {
-      id: 3,
-      name: "Mechanical Keyboard",
-      category: "Accessories",
-      price: "₹3,500",
-      stock: 8,
-      image: "https://picsum.photos/300/200?random=3",
-    },
-    {
-      id: 4,
-      name: "Office Chair",
-      category: "Furniture",
-      price: "₹7,800",
-      stock: 5,
-      image: "https://picsum.photos/300/200?random=4",
-    },
-    {
-      id: 5,
-      name: "Monitor 24 Inch",
-      category: "Electronics",
-      price: "₹12,000",
-      stock: 20,
-      image: "https://picsum.photos/300/200?random=5",
-    },
-    {
-      id: 6,
-      name: "Printer",
-      category: "Electronics",
-      price: "₹8,500",
-      stock: 9,
-      image: "https://picsum.photos/300/200?random=6",
-    },
-  ];
+const API_URL = "http://localhost:5000/api/products";
 
+function Products() {
+  const { addToCart } = useCart();
+
+  const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [cartMessage, setCartMessage] = useState("");
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await fetch(API_URL);
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || "Failed to load products.");
+        }
+
+        setProducts(
+          Array.isArray(data.products) ? data.products : []
+        );
+      } catch (err) {
+        setError(
+          err.message || "Unable to connect to the products API."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const categories = [
+    ...new Set(
+      products
+        .map((product) => product.category)
+        .filter(Boolean)
+    ),
+  ];
 
   const filteredProducts = products.filter((product) => {
-    const matchSearch = product.name
+    const matchSearch = (product.name || "")
       .toLowerCase()
       .includes(search.toLowerCase());
 
@@ -68,6 +62,22 @@ function Products() {
 
     return matchSearch && matchCategory;
   });
+
+  const formatPrice = (price) =>
+    `₹${Number(price).toLocaleString("en-IN", {
+      maximumFractionDigits: 2,
+    })}`;
+
+  const handleAddToCart = (product) => {
+    if (Number(product.stock_quantity) <= 0) {
+      setCartMessage("This product is out of stock.");
+      return;
+    }
+
+    addToCart(product);
+
+    setCartMessage(`${product.name} added to cart.`);
+  };
 
   return (
     <div className="dashboard-layout">
@@ -78,6 +88,7 @@ function Products() {
 
         <div className="dashboard-body">
           <h1>Products</h1>
+
           <p className="dashboard-subtitle">
             Browse and manage available products.
           </p>
@@ -96,35 +107,92 @@ function Products() {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
-              <option>All</option>
-              <option>Electronics</option>
-              <option>Accessories</option>
-              <option>Furniture</option>
+              <option value="All">All Categories</option>
+
+              {categories.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
             </select>
           </div>
 
-          <div className="product-grid">
-            {filteredProducts.map((product) => (
-              <div className="product-card" key={product.id}>
-                <img src={product.image} alt={product.name} />
+          {cartMessage && (
+            <p role="status" aria-live="polite">
+              {cartMessage}
+            </p>
+          )}
 
-                <h3>{product.name}</h3>
+          {loading && (
+            <p role="status">Loading products...</p>
+          )}
 
-                <p className="category">{product.category}</p>
+          {!loading && error && (
+            <div role="alert">
+              <p>{error}</p>
 
-                <div className="product-bottom">
-                  <span className="price">{product.price}</span>
-                  <span className="stock">
-                    Stock: {product.stock}
-                  </span>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {!loading && !error && filteredProducts.length === 0 && (
+            <p>
+              {products.length === 0
+                ? "No products available yet."
+                : "No products match your search or category."}
+            </p>
+          )}
+
+          {!loading && !error && filteredProducts.length > 0 && (
+            <div className="product-grid">
+              {filteredProducts.map((product) => (
+                <div className="product-card" key={product.id}>
+                  <img
+                    src={
+                      product.image_url ||
+                      `https://picsum.photos/300/200?random=${product.id}`
+                    }
+                    alt={product.name}
+                    onError={(e) => {
+                      e.currentTarget.style.visibility = "hidden";
+                    }}
+                  />
+
+                  <h3>{product.name}</h3>
+
+                  <p className="category">
+                    {product.category || "Uncategorized"}
+                  </p>
+
+                  <div className="product-bottom">
+                    <span className="price">
+                      {formatPrice(product.price)}
+                    </span>
+
+                    <span className="stock">
+                      Stock: {product.stock_quantity}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="add-cart-btn"
+                    disabled={Number(product.stock_quantity) <= 0}
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    {Number(product.stock_quantity) <= 0
+                      ? "Out of Stock"
+                      : "Add to Cart"}
+                  </button>
                 </div>
-
-                <button className="add-cart-btn">
-                  Add to Cart
-                </button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
