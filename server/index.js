@@ -6,6 +6,7 @@ const pool = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
+const authenticateToken = require("./middleware/authMiddleware");
 
 // Middleware
 app.use(cors());
@@ -38,6 +39,13 @@ app.get("/api/db-test", async(req, res) => {
             message: "Database connection failed",
         });
     }
+});
+app.get("/api/protected", authenticateToken, (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "Protected API accessed successfully",
+        user: req.user,
+    });
 });
 
 // Start Server
